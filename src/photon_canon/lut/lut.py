@@ -1,14 +1,19 @@
 import itertools
-import sqlite3
-from typing import Optional
+from numbers import Real
+from typing import Optional, List, Union, Tuple
 
-from numpy.typing import NDArray
+from ..import_utils import np, NDArray, RegularGridInterpolator
+import pandas as pd
+
 from tqdm import tqdm
 
 from ..optics import System, Medium
 from ..optics import Photon
 
 from ..lut.utils import add_metadata, add_system_data, add_simulation_result
+from ..utils import latest_simulation_id, CON
+
+c = CON.cursor()
 
 
 def generate_lut(
@@ -76,4 +81,91 @@ def generate_lut(
             if layer == variable:
                 depth = bound[1] = bound[0]
                 break
-        add_simulation_result(simulation_id, variable.mu_s, variable.mu_a, variable.g, depth, )
+        add_simulation_result(simulation_id, variable.mu_s, variable.mu_a, variable.g, depth, target)
+
+
+class LUT:
+    def __init__(self,
+                 simulation_id: int = latest_simulation_id,
+                 dimensions: List[str] = ['mu_s', 'mu_s', 'g'],
+                 extrapolate: bool = False):
+        self.simulation_id = simulation_id
+        self.dimensions = dimensions
+        self.extrapolate = extrapolate
+        self._interpolator = None
+
+    def __call__(self,
+                 *values: Union[Real, Tuple[Real]],
+                 extrapolate: bool = None) -> Union[Real, np.ndarray[Real]]:
+        """Supports 1D, 2D, and 3D lookups."""
+        if not isinstance(values, tuple):
+            values = (values,)
+        if not len(values) <= len(self.dimensions):
+            raise IndexError(f"LUT supports only up to {len(self.dimensions)}D. {self.dimensions}")
+
+        # Fill in db range for unqueried dimensions
+        pts = []
+        for i, dim in enumerate(self.dimensions):
+            if i >= len(values):
+                c.execute(f"""
+                SELECT DISTINCT {dim} FROM mclut WHERE simulation_id={self.simulation_id}
+                """)
+                fetched = c.fetchall()
+                pts.append(np.unique([row[0] for row in fetched]))
+            else:
+                pts.append([values[i]])
+
+        # Find nearest bounds for interpolation. Here we assume cubic spline interpolation for all parameters.
+        # Build ND mesh to interpolate within
+        mesh = np.meshgrid(*pts, indexing='ij')
+        query_pts = np.array([m.flatten() for m in mesh]).T
+
+        # Set/Reset extrapolation option
+        interpolator = self.interpolator
+        interpolator.bounds_error = ~extrapolate if extrapolate is not None else self.extrapolate
+        return interpolator(query_pts)
+
+    @property
+    def interpolator(self) -> RegularGridInterpolator:
+        if self._interpolator is None:
+            query = f"SELECT {', '.join(self.dimensions)}, output FROM mclut WHERE simulation_id={self.simulation_id}"
+            c.execute(query)
+            results = c.fetchall()
+            if results is None or len(results) == 0:
+                raise IOError(
+                    f'No simulations found at id {self.simulation_id}. Run generate_lut '
+                    f'and save results to lut.db before using lookup or try a '
+                    f'different ID.')
+
+            # If no exact match, check if parameters are within the bounds for interpolation
+            *values, output = zip(*results)
+
+            # Get data into a regular grid
+            points = tuple(np.unique(val) for val in values)
+            output = np.asarray(output).reshape(*[len(p) for p in points])
+
+            # Interpolation/Extrapolate (if True)
+            self._interpolator = RegularGridInterpolator(
+                points, output, method='cubic', bounds_error=not self.extrapolate, fill_value=None
+            )
+
+        return self._interpolator
+
+    @classmethod
+    def to_pandas(cls, simulation_id=None):
+        if simulation_id is None:
+            if hasattr(cls, 'simulation_id'):
+                simulation_id = cls.simulation_id
+            else:
+                simulation_id = latest_simulation_id
+        query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
+        df = pd.read_sql_query(query, CON)
+        return df
+
+    def surface(self) -> Tuple[Real]:
+        df = self.to_pandas()
+        x = df['mu_s'].unique()
+        y = df['mu_a'].unique()
+        X, Y = np.meshgrid(x, y, indexing='ij')
+        Z = np.reshape(df['output'], (len(x), len(y)))
+        return X, Y, Z

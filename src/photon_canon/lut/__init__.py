@@ -1,1 +1,1 @@
-from .lut import generate_lut
+from .lut import generate_lut, LUT
