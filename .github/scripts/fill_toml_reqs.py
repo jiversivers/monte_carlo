@@ -1,7 +1,6 @@
 import re
 
 import toml
-from pip._internal import pyproject
 
 
 def recurse_and_replace(nested_dict, search_string, replace_string):
