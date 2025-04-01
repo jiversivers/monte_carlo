@@ -27,22 +27,6 @@ NA = 1.0
 rng = np.random.default_rng()
 
 
-# Formulation for use in analytical modelling.
-# NOTE: This gives the beam _at_ a distance WD from where ID/OD were measured, presumably at the medium of measure.
-# theta_max serves as a compatibility placeholder, but is not used for darkfield_footprint.
-def darkfield_footprint(inner: Real = ID,
-                        outer: Real = OD,
-                        working_distance: Real = WD,
-                        theta_min: Real = THETA) -> Real:
-    # Calculate radii' at WD
-    inner = inner / 2 + working_distance * np.tan(theta_min)
-    outer = outer / 2 + working_distance * np.tan(theta_min)
-
-    # Calculate area of circles and total beam area
-    return np.pi * (outer ** 2 - inner ** 2)
-
-
-# Sampler for use in Monte Carlo modelling
 # NOTE: This samples the ring _at_ where ID/OD are measured from, presumably a distance WD above the medium of measure.
 def ring_pattern(r_bounds: Union[Real, Tuple[Real, Real]],
                  angle_bounds: Union[Real, Tuple[Real, Real]]) -> Callable:
