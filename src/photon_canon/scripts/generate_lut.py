@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 
 from photon_canon import Medium, System, Detector, Illumination, hardware
-
+from photon_canon.import_utils import np
 from tqdm import tqdm
 
 
@@ -76,7 +76,7 @@ def main():
         mu_a REAL NOT NULL,
         g REAL NOT NULL,
         depth REAL NOT NULL,
-        reflectance REAL NOT NULL,
+        output REAL NOT NULL,
         simulation_id INTEGER NOT NULL,
         FOREIGN KEY (simulation_id) REFERENCES mclut_simulations(id)
         )
