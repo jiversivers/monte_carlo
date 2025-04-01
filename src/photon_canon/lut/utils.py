@@ -3,7 +3,8 @@ from numbers import Real
 from pathlib import Path
 from typing import Union, Iterable
 
-import numpy as np
+from ..import_utils import np
+
 from .. import System
 
 # Set up simulation database
@@ -61,7 +62,7 @@ def add_system_data(simulation_id: int, system: System) -> None:
             float(layer.mu_a_at(layer.ref_wavelength)),
             float(layer.g),
             float(bound[1] - bound[0]),
-            float(layer.ref_wavelengths),
+            float(layer.ref_wavelength),
             int(simulation_id)
         ))
 
@@ -85,18 +86,20 @@ def add_simulation_result(simulation_id: int,
     shapes = [arrays[idx].shape for idx, itr in enumerate(iters) if itr]
 
     # Check that sizes are compatible
-    if not np.all(shapes == shapes[0]):
+    if shapes and not np.all(shapes == shapes[0]):
         raise ValueError('Iterables must have the same shape')
+    elif not shapes:
+        shapes = [[1]]
 
     # Expand non-iterables to match and make all floats
     for i, itr in enumerate(iters):
         if not itr:
-            arrays[i] == np.repeat(float(arrays[i]), shapes[0][1])
+            arrays[i] = np.repeat([float(arrays[i])], shapes[0][0])
         else:
-            arrays[i] = [float(val) for val in arrays[i]]
+            arrays[i] = np.array([float(val) for val in arrays[i]])
 
     # Put into tuples for executemany
-    data_tuples = tuple((zip(arrays)))
+    data_tuples = tuple(zip(*arrays))
 
     # Add table (if not exists)
     c.execute("""
