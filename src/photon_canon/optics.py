@@ -5,47 +5,52 @@ import warnings
 from numbers import Real
 from typing import Union, Optional, Iterable, Tuple, Callable, List, Dict, Any
 
-from matplotlib import pyplot as plt, animation
+from matplotlib import pyplot as plt
+from pydantic import BaseModel, field_validator, model_validator
 
 from .hardware import ring_pattern, cone_of_acceptance, ID, OD, THETA
-from .utils import calculate_mus, sample_spectrum
-
-try:
-    import cupy as np
-    from cupy import iterable
-    from cupy.typing import NDArray
-
-    if not np.is_available():
-        raise RuntimeError("CUDA not available; reverting to NumPy.")
-except (ImportError, RuntimeError):
-    import numpy as np
-    from numpy import iterable
-    from numpy.typing import NDArray
-
-    np.is_available = lambda: False  # Mock the `is_available` method for consistency
+from .utils import sample_spectrum
+from .contrib.bio import calculate_mus
+from .import_utils import np, iterable, NDArray
 
 # Get some default properties
 mu_s, mu_a, wl = calculate_mus()
 
 
-class Medium:
-    def __init__(self,
-                 n: Real = 1,
-                 mu_s: Union[Real, Iterable[Real]] = 0,
-                 mu_a: Union[Real, Iterable[Real]] = 0,
-                 wavelengths: Iterable[Real] = wl,
-                 ref_wavelength: Real = 650,
-                 g: Real = 1,
-                 desc: str = 'default',
-                 display_color: Optional[str] = None):
-        self.desc = desc
-        self.n = n
-        self.mu_s = np.array(mu_s)
-        self.mu_a = np.array(mu_a)
-        self.wavelengths = np.array(wavelengths)
-        self.g = g
-        self.display_color = display_color
-        self.ref_wavelength = ref_wavelength
+class Medium(BaseModel):
+    n: float = 1
+    mu_s: Union[float, np.ndarray] = 0
+    mu_a: Union[float, np.ndarray] = 0
+    wavelengths: np.ndarray = wl
+    ref_wavelength: float = 650
+    g: float = 1
+    desc: str = 'default'
+    display_color: Optional[str] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @field_validator('mu_s', 'mu_a', 'wavelengths', mode='before')
+    @classmethod
+    def convert_to_array(cls, v: Union[float, Iterable[float]]) -> np.ndarray:
+        assert np.all(v >= 0)
+        return np.array(v)
+
+    @field_validator('g', mode='before')
+    @classmethod
+    def g_vals(cls, g: float) -> float:
+        assert -1 <= g <= 1
+        return g
+
+    @model_validator(mode='after')
+    def force_non_scatterers_g(self) -> Medium:
+        if np.any(self.mu_s == 0 and self.g != 1):
+            warnings.warn('g is automatically set to 1 where mu_s is 0. '
+                          'Set a non-zero scattering coefficient if a non-unity g value is necessary.')
+            self.g = np.where(self.mu_s == 0, 1, self.g)
+        if iterable(self.g) and len(self.g) == 1:
+            self.g = self.g[0]
+        return self
 
     def __repr__(self):
         return self.desc.capitalize() + ' Optical Medium Object'
@@ -71,7 +76,7 @@ class Medium:
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def _wave_index(self, wavelength: Union[Real, Iterable[Real]]):
+    def _wave_index(self, wavelength: Union[float, Iterable[float]]):
         if iterable(wavelength) and iterable(self.wavelengths):
             return [np.where(self.wavelengths == wl)[0][0] for wl in wavelength]
         elif iterable(self.wavelengths):
@@ -79,22 +84,22 @@ class Medium:
         else:
             return 0
 
-    def mu_s_at(self, wavelengths: Real):
+    def mu_s_at(self, wavelengths: float):
         if iterable(self.mu_s):
             return np.interp(wavelengths, self.wavelengths, self.mu_s)
         return self.mu_s
 
-    def mu_a_at(self, wavelengths: Real):
+    def mu_a_at(self, wavelengths: float):
         if iterable(self.mu_a):
             return np.interp(wavelengths, self.wavelengths, self.mu_a)
         return self.mu_a
 
-    def mu_t_at(self, wavelengths: Real):
+    def mu_t_at(self, wavelengths: float):
         if iterable(self.mu_t):
             return np.interp(wavelengths, self.wavelengths, self.mu_t)
         return self.mu_t
 
-    def albedo_at(self, wavelengths: Real):
+    def albedo_at(self, wavelengths: float):
         if iterable(self.albedo):
             return np.interp(wavelengths, self.wavelengths, self.albedo)
         return self.albedo
@@ -110,29 +115,17 @@ class Medium:
         else:
             return self.mu_a / self.mu_t
 
-    @property
-    def g(self):
-        return self._g
-
-    @g.setter
-    def g(self, g):
-        if np.any(self.mu_s == 0 and g != 1):
-            warnings.warn('g is automatically set to 1 where mu_s is 0. '
-                          'Set a non-zero scattering coefficient if a non-unity g value is necessary.')
-            self._g = np.where(self.mu_s == 0, 1, g)
-        self._g = g
-
 
 class Illumination:
     def __init__(self,
                  pattern: Callable = ring_pattern((ID, OD), THETA),
-                 spectrum: Optional[Iterable] = None) -> None:
+                 spectrum: Optional[Iterable[Real]] = None) -> None:
         self.pattern = pattern
         self.spectrum = spectrum
 
     def photon(self, batch_size: int = 50000, **kwargs: Any) -> Photon:
         location, direction = self.pattern(batch_size)
-        wavelength = sample_spectrum(self.spectrum) if self.spectrum else None
+        wavelength = sample_spectrum(self.spectrum) if self.spectrum is not None else None
         return Photon(wavelength, batch_size=batch_size, location_coordinates=location, directional_cosines=direction,
                       **kwargs)
 
@@ -144,9 +137,9 @@ class Detector:
         self.n_detected = 0
         self.desc = desc
 
-    def detect(self, location: Iterable[Real],
-               direction: Union[Real, Iterable[Real]],
-               weights: Optional[Union[Real, Iterable[Real]]] = None) -> None:
+    def detect(self, location: Iterable[float],
+               direction: Union[float, Iterable[float]],
+               weights: Optional[Union[float, Iterable[float]]] = None) -> None:
         weights = weights if weights is not None else 1
         self.n_total += np.nansum(weights)
         x, y = location[:, :2].T
@@ -168,14 +161,15 @@ class Detector:
 
 
 # Default "sampler" to start photons straight down at origin
-pencil_beam = Illumination(lambda n: (np.repeat((0, 0, 0), n), np.repeat((0, 0, 1), n)))
+pencil_beam = Illumination(lambda n: (np.repeat(np.array((0, 0, 0))[np.newaxis, ...], n, axis=0),
+                                      np.repeat(np.array((0, 0, 1))[np.newaxis, ...], n, axis=0)))
 
 
 class System:
     def __init__(self, *args,
-                 surrounding_n: Real = 1,
+                 surrounding_n: float = 1,
                  illuminator: Optional[Illumination] = pencil_beam,
-                 detector: Optional[Tuple[Detector, Real]] = (None, None)) -> None:
+                 detector: Optional[Tuple[Detector, float]] = (None, None)) -> None:
         """
         Create a system of optical mediums and its surroundings that hold the optical properties and can determine the
         medium of a location as well as interfaces crossing given two locations. The blocks are constructed top down in
@@ -215,7 +209,7 @@ class System:
             self.add(args[i], args[i + 1])
 
     @property
-    def boundaries(self) -> NDArray[Real]:
+    def boundaries(self) -> NDArray[float]:
         return np.asarray(self._boundaries)
 
     @boundaries.setter
@@ -264,15 +258,15 @@ class System:
         Provides an up-to-date dictionary representation of layer boundaries.
 
         This property dynamically constructs a dictionary mapping layer boundaries to their corresponding
-        layers. It is useful for querying interfaces efficiently in real-time.
+        layers. It is useful for querying interfaces efficiently in float-time.
 
         :return: A dictionary where keys are tuples representing layer boundaries (lower_bound, upper_bound),
                  and values are the corresponding layers.
-        :rtype: dict[tuple[Real, Real], Layer]
+        :rtype: dict[tuple[float, float], Layer]
         """
         return {(self.boundaries[i], self.boundaries[i + 1]): layer for i, layer in enumerate(self.layer)}
 
-    def add(self, layer: Medium, depth: Real) -> None:
+    def add(self, layer: Medium, depth: float) -> None:
         """
         Adds a new layer of a given depth to the system.
 
@@ -284,12 +278,12 @@ class System:
         :param layer: The `Medium` object representing the new layer.
         :type layer: Medium
         :param depth: The thickness of the new layer.
-        :type depth: Real
+        :type depth: float
         :raises ValueError: If the preceding layer is semi-infinite.
         :return: None
         """
 
-        if not (self.layer[-1] == self.surroundings or self.boundaries[-1] != float('inf')):
+        if self.layer[-1] is not self.surroundings and self.boundaries[-1] == float('inf'):
             raise OverflowError('Cannot add to semi-infinite system.')
         depth = float(depth)
 
@@ -314,7 +308,7 @@ class System:
             setattr(photon, key, val)
         return photon
 
-    def in_medium(self, location: Iterable[Real]) -> NDArray[Union[Medium, Tuple[Medium, Medium]]]:
+    def in_medium(self, location: Iterable[float]) -> NDArray[Union[Medium, Tuple[Medium, Medium]]]:
         """
         Return the medium(s) that are at the queried coordinate. If the coordinate is an interfaces location, the
         mediums that makeup the interfaces are returned as a tuple, this includes boundary interfaces being returned
@@ -337,13 +331,13 @@ class System:
         location = np.asarray(location)
         z = location if np.ndim(location) == 1 else np.asarray(location)[:, 2]
         in_medium = np.empty_like(z, dtype=object)
-        in_medium = np.where(z == float('inf'), self.surroundings, in_medium)
-        in_medium = np.where(z == float('-inf'), self.surroundings, in_medium)
+        in_medium = np.where(z == float('inf'), self.layer[-1], in_medium)
+        in_medium = np.where(z == float('-inf'), self.layer[0], in_medium)
 
         for bound, medium in self.stack.items():
-            # IF between boundaries, get that medium
+            # If between boundaries, get that medium
             mask_inside = np.logical_and(bound[0] < z, z < bound[1])
-            mask_boundary = (bound[0] == z)
+            mask_boundary = ((bound[0] == z) & (~np.isinf(z)))
 
             in_medium[mask_inside] = medium
 
@@ -362,8 +356,8 @@ class System:
         return in_medium
 
     def interface_crossed(self,
-                          location0: Iterable[Real],
-                          location1: Iterable[Real]) -> Union[Tuple[Union[Medium, ()], Union[Real, None]]]:
+                          location0: Iterable[float],
+                          location1: Iterable[float]) -> Union[Tuple[Union[Medium, ()], Union[float, None]]]:
         """
         Determines the first interfaces crossed when moving between two locations, considering only the z-coordinates.
 
@@ -483,12 +477,12 @@ class IndexableProperty(np.ndarray):
 
     def __setitem__(self,
                     index: int,
-                    value: Real):
+                    value: float):
         super().__setitem__(index, value)
         if self.normalize:
             self /= np.linalg.norm(self, axis=-1)[..., np.newaxis]
 
-    def __getitem__(self, index: int) -> IndexableProperty[Real]:
+    def __getitem__(self, index: int) -> IndexableProperty[float]:
         item = super().__getitem__(index)
         if isinstance(item, IndexableProperty):
             item.normalize = False
@@ -507,27 +501,27 @@ class Photon:
         and weights, which can be modified and tracked throughout the simulation.
 
         Attributes:
-        - batch_size (int): The number of photons in the batch.
-        - wavelength (Union[Real, Iterable[Real]]): The wavelength(s) of the photon(s).
+        - n (int): The number of photons in the batch.
+        - wavelength (Union[float, Iterable[float]]): The wavelength(s) of the photon(s).
         - system (Optional[System]): The system that contains the photon batch.
-        - directional_cosines (IndexableProperty[Real]): The directional cosines for each photon in the batch.
+        - directional_cosines (IndexableProperty[float]): The directional cosines for each photon in the batch.
         - location_coordinates (np.ndarray): The coordinates of the location of each photon in the batch.
         - weights (np.ndarray): The weights of each photon in the batch.
-        - russian_roulette_constant (Real): The constant used for photon survival in the Russian roulette process.
+        - russian_roulette_constant (float): The constant used for photon survival in the Russian roulette process.
         - recurse (bool): Whether recursion is allowed in the simulation.
         - recursion_depth (int): The current depth of recursion in the simulation.
-        - recursion_limit (Real): The limit for recursion depth in the simulation.
+        - recursion_limit (float): The limit for recursion depth in the simulation.
         - throw_recursion_error (bool): Whether to throw an error when recursion limit is exceeded (alt. warn and break).
         - keep_secondary_photons (bool): Whether to retain secondary (recursed) photons in the simulation.
-        - tir_limit (Real): The limit for total internal reflection (TIR).
-        - A (Real): The amount of the batch that has been absorbed.
-        - R (Real): The amount of the batch that has been reflected (out of the system).
-        - T (Real): The amount of the batch that has been transmitted (out of the system).
-        - exit_location (np.ndarray[Real]): The coordinates of the photon at the end of the simulation.
-        - exit_direciton (np.ndarray[Real]): The direction of the photon at the end of the simulation.
-        - exit_weights (np.ndarray[Real]): The weights of the photon at the end of the simulation.
-        - location_history (np.ndarray[Real]): The location history of the photon at all steps in the batch simulation.
-        - weights_history (np.ndarray[Real]): The weights history of the photon at all steps in the batch simulation.
+        - tir_limit (float): The limit for total internal reflection (TIR).
+        - A (float): The amount of the batch that has been absorbed.
+        - R (float): The amount of the batch that has been reflected (out of the system).
+        - T (float): The amount of the batch that has been transmitted (out of the system).
+        - exit_location (np.ndarray[float]): The coordinates of the photon at the end of the simulation.
+        - exit_direciton (np.ndarray[float]): The direction of the photon at the end of the simulation.
+        - exit_weights (np.ndarray[float]): The weights of the photon at the end of the simulation.
+        - location_history (np.ndarray[float]): The location history of the photon at all steps in the batch simulation.
+        - weights_history (np.ndarray[float]): The weights history of the photon at all steps in the batch simulation.
         - cache_register (np.ndarray[np.bool_]): A cache register to track whether medium needs to be re-queried returned from the cache.
         - at_interface (np.ndarray[np.bool_]): A boolean array indicating whether the photon is at an interface currently.
 
@@ -545,19 +539,19 @@ class Photon:
         - plot_path: A plotting function to plot the photon histories in 3d or projected onto an input plane.
         """
 
-    def __init__(self, wavelength: Union[Real, Iterable[Real]],
+    def __init__(self, wavelength: Union[float, Iterable[float]],
                  batch_size: int = 0,
                  system: Optional[System] = None,
-                 directional_cosines: Iterable[Real] = (0, 0, 1),
-                 location_coordinates: Iterable[Real] = (0, 0, 0),
-                 weights: Union[Real, Iterable[Real]] = 1,
-                 russian_roulette_constant: Real = 20,
+                 directional_cosines: Iterable[float] = (0, 0, 1),
+                 location_coordinates: Iterable[float] = (0, 0, 0),
+                 weights: Union[float, Iterable[float]] = 1,
+                 russian_roulette_constant: float = 20,
                  recurse: bool = True,
                  recursion_depth: Optional[int] = 0,
-                 recursion_limit: Optional[Real] = 100,
+                 recursion_limit: Optional[float] = 100,
                  throw_recursion_error: bool = True,
                  keep_secondary_photons: bool = False,
-                 tir_limit: Optional[Real] = float('inf')) -> None:
+                 tir_limit: Optional[float] = float('inf')) -> None:
         """
            Initializes a photon batch with specified attributes and sets up trackers for simulation.
 
@@ -567,33 +561,33 @@ class Photon:
 
            Parameters:
            :param wavelength: A single wavelength or an iterable of wavelengths for the photon batch.
-           :type wavelength: Union[Real, Iterable[Real]]
+           :type wavelength: Union[float, Iterable[float]]
            :param n: The number of photons in the batch. Defaults to 0.
            :type n: int, optional
            :param system: The system containing the photon batch. Defaults to None.
            :type system: Optional[System], optional
            :param directional_cosines: The directional cosines of the photon batch. Can be a single set or an iterable
                matching the batch size. Defaults to (0, 0, 1).
-           :type directional_cosines: Iterable[Real], optional
+           :type directional_cosines: Iterable[float], optional
            :param location_coordinates: The location coordinates of the photon batch. Can be a single set or an iterable
                matching the batch size. Defaults to (0, 0, 0).
-           :type location_coordinates: Iterable[Real], optional
+           :type location_coordinates: Iterable[float], optional
            :param weights: The weights of the photon batch. Can be a single value or an iterable matching the batch size. Defaults to 1.
-           :type weights: Union[Real, Iterable[Real]], optional
+           :type weights: Union[float, Iterable[float]], optional
            :param russian_roulette_constant: The constant used for photon survival in the Russian roulette process. Defaults to 20.
-           :type russian_roulette_constant: Real, optional
+           :type russian_roulette_constant: float, optional
            :param recurse: A flag indicating whether recursion is allowed in the simulation. Defaults to True.
            :type recurse: bool, optional
            :param recursion_depth: The current depth of recursion. Defaults to 0.
            :type recursion_depth: int, optional
            :param recursion_limit: The limit for recursion depth. Defaults to 100.
-           :type recursion_limit: Real, optional
+           :type recursion_limit: float, optional
            :param throw_recursion_error: A flag indicating whether to throw an error when the recursion limit is exceeded. Defaults to True.
            :type throw_recursion_error: bool, optional
            :param keep_secondary_photons: A flag indicating whether to retain secondary photons in the simulation. Defaults to False.
            :type keep_secondary_photons: bool, optional
            :param tir_limit: The limit for total internal reflection (TIR). Defaults to infinity.
-           :type tir_limit: Real, optional
+           :type tir_limit: float, optional
 
            Initializes the photon state, sets up directional cosines, location coordinates, and weights for the photon batch.
            Sets up trackers for exit direction, exit location, exit weights, and secondary photons. Initializes photon
@@ -679,17 +673,17 @@ class Photon:
         return value
 
     @property
-    def location_coordinates(self) -> NDArray[Real]:
+    def location_coordinates(self) -> NDArray[float]:
         """
         Retrieves the current value of the photon location coordinates.
 
         :return: The current value of the location coordinates as an np.ndarray.
-        :rtype: NDArray[Real]
+        :rtype: NDArray[float]
         """
         return self._location_coordinates
 
     @location_coordinates.setter
-    def location_coordinates(self, location_coordinates: Iterable[Real]) -> None:
+    def location_coordinates(self, location_coordinates: Iterable[float]) -> None:
         """
         Sets the current value of the location coordinates and update the medium cache register for those that have 
         change.
@@ -710,17 +704,17 @@ class Photon:
         self.cache_register = np.where(unchanged, self.cache_register, np.False_)
 
     @property
-    def directional_cosines(self) -> IndexableProperty[Real]:
+    def directional_cosines(self) -> IndexableProperty[float]:
         """
         Retrieves the current value of the photon directional cosines.
 
         :return: The current value of the directional cosines, wrapped in an `IndexableProperty` object.
-        :rtype: IndexableProperty[Real]
+        :rtype: IndexableProperty[float]
         """
         return self._directional_cosines
 
     @directional_cosines.setter
-    def directional_cosines(self, directional_cosines: Iterable[Real]) -> None:
+    def directional_cosines(self, directional_cosines: Iterable[float]) -> None:
         """
         Setter for the photon directional cosines that ensures the normalization is maintained and updated the cache 
         register where the sign of the z-direction changes to trigger medium updates for those photons.
@@ -728,8 +722,8 @@ class Photon:
         This setter automatically re-assigns the updated value to an indexable property object,
         which handles normalization both at creation and when setting values using an indexed `__setitem__`.
 
-        :param value: An iterable of real numbers representing the directional cosines of the photon.
-        :type value: Iterable[Real]
+        :param value: An iterable of float numbers representing the directional cosines of the photon.
+        :type value: Iterable[float]
         :return: This method updates the directional cosines and does not return any value.
         :rtype: None
         """
@@ -824,26 +818,26 @@ class Photon:
             self.scatter()
 
     @property
-    def weights(self) -> NDArray[Real]:
+    def weights(self) -> NDArray[float]:
         """
         Retrieves the current weights of the photons.
         Retrieves the current weights of the photons.
 
-        :return: An array of real values representing the photon weights.
-        :rtype: NDArray[Real]
+        :return: An array of float values representing the photon weights.
+        :rtype: NDArray[float]
         """
         return self._weights
 
     @weights.setter
-    def weights(self, weights: Union[Real, Iterable[Real]]) -> None:
+    def weights(self, weights: Union[float, Iterable[float]]) -> None:
         """
         Sets the photon weights and applies Russian roulette if the weights falls below the threshold of 0.005.
 
         If the weights is below 0.005, the `russian_roulette` method is called to determine whether the photon
         survives or is terminated.
 
-        :param weights: The new weights value(s) to set. Can be a single real number or an iterable of real numbers.
-        :type weights: Union[Real, Iterable[Real]]
+        :param weights: The new weights value(s) to set. Can be a single float number or an iterable of float numbers.
+        :type weights: Union[float, Iterable[float]]
         :return: This method updates the weights in place and does not return a value.
         :rtype: None
         """
@@ -915,7 +909,7 @@ class Photon:
         :rtype: np.bool_
         """
 
-        self._is_terminated = np.all((self.medium == self.system.surroundings) | (self.weights <= 0.0))
+        self._is_terminated = np.all([medium is self.system.surroundings for medium in self.medium] | (self.weights <= 0.0))
         return self._is_terminated
 
     def headed_into(self, mediums: Optional[NDArray[Union[Medium, Tuple[Medium, Medium]]]] = None) -> NDArray[Medium]:
@@ -973,7 +967,7 @@ class Photon:
         self.A += np.sum(absorbed_weights)
         self.weights = self.weights - absorbed_weights
 
-    def move(self, step: Union[Real, Iterable[Real]] = None) -> None:
+    def move(self, step: Union[float, Iterable[float]] = None) -> None:
         """
         Moves the photon one step in its current direction.
 
@@ -989,7 +983,7 @@ class Photon:
 
         :param step: The distance the photon should move. If not provided, the step size is sampled based on the mean
         free path.
-        :type step: Union[Real, Iterable[Real]], optional
+        :type step: Union[float, Iterable[float]], optional
         :return: None. The photon’s state (location, weights) is updated in place.
         :rtype: None
         """
@@ -1030,7 +1024,7 @@ class Photon:
         self.weights_history = np.append(self.weights_history, self.weights[..., np.newaxis], axis=1)
 
         # Check if any new photons exited
-        exit_mask = (self.headed_into() == self.system.surroundings) & (self.weights > 0)
+        exit_mask = np.array([medium is self.system.surroundings for medium in self.headed_into()]) & (self.weights > 0)
 
         if np.any(exit_mask):
             self.exit_location[exit_mask] = self.location_history[exit_mask, ..., -1]
@@ -1057,7 +1051,7 @@ class Photon:
         This method determines the weight of photon reflection and updates the tracker's direction accordingly.
         If reflection occurs, it either updates the photon direction or spawns secondary photons with adjusted weights
         to continue the recursive simulation. The photon's direction is updated based on the interface's refractive
-        indices. This operation is performed only on photons specified by the input mask.
+        values. This operation is performed only on photons specified by the input mask.
 
         :param interfaces: NumPy array containing interface definitions.
                            Each element is a tuple of (Medium, Medium) for a valid interface or (None,) if no interface
@@ -1094,7 +1088,7 @@ class Photon:
         refract_mask = ~tir_mask
         mu_z_t_masked = np.sqrt(1 - (sin_theta_t[refract_mask] ** 2))
 
-        # Extract only the masked refractive indices for masked values
+        # Extract only the masked refractive values for masked values
         n1_masked = n1[refract_mask]
         n2_masked = n2[refract_mask]
         abs_mu_z_i = np.abs(mu_z_i[refract_mask])
@@ -1157,17 +1151,17 @@ class Photon:
         # Send to setter for normalization
         self.directional_cosines[mask] = np.column_stack((mu_x, mu_y, mu_z_t))
 
-    def scatter(self, theta_phi: Optional[Union[Iterable[Real, Real], Iterable[Iterable[Real, Real]]]] = None):
+    def scatter(self, theta_phi: Optional[Union[Iterable[float, float], Iterable[Iterable[float, float]]]] = None):
         """
         This method updates the direciton of the photon members where they are in scattering media, but not at an
         interface.
 
         :param theta_phi: Angles to udpte direction with. Optional.
-        :type theta_phi: Union[Iterable[Real, Real], Iterable[Iterable[Real, Real]]]
+        :type theta_phi: Union[Iterable[float, float], Iterable[Iterable[float, float]]]
         :return: None. Updates photon directions where the photon is in scattering media (but not at an interface)
         """
         # Early break if all are at an interface or in non-scattering medium
-        g = np.array([medium.g for medium in self.medium])  # (also forces eset of interface cache where necessary)
+        g = np.array([medium.g for medium in self.medium])  # (also forces reset of interface cache where necessary)
         if np.all(self.at_interface) or np.all(g == 1):
             return
 
