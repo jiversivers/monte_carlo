@@ -5,8 +5,6 @@ from typing import Optional, List, Union, Tuple
 from ..import_utils import np, NDArray, RegularGridInterpolator
 import pandas as pd
 
-from tqdm import tqdm
-
 from ..optics import System, Medium
 from ..optics import Photon
 
@@ -31,6 +29,7 @@ def generate_lut(
     This function iterates over the input arrays, modifying the optical properties of `variable`
     (a `Medium` object) accordingly. A set of `Photon` objects is then simulated within the `system`.
 
+    :param output: Determines what output measure to add to the LUT. Default total reflectance.
     :param system: The optical system in which the photons are simulated.
     :type system: System
     :param variable: The medium whose properties are varied in the LUT generation.
@@ -47,12 +46,16 @@ def generate_lut(
     """
 
     # Add LUT metadata to db
-    simulation_id = add_metadata(n=photon.batch_size, recursive=photon.recursive, detector=system.detector)
+    simulation_id = add_metadata(n=photon.batch_size, recursive=photon.recurse, detector=system.detector)
     add_system_data(simulation_id, system)
 
+    # Setup progress bar (if desired)
+    iterable = itertools.product(*arrays.values())
+    if pbar:
+        from tqdm import tqdm
+        iterable = tqdm(iterable, total=np.prod([len(arr) for arr in arrays.values()]))
+
     # Iterate through all permutations of iterables
-    iterable = tqdm(itertools.product(*arrays.values()),
-                    total=sum([len(arr) for arr in arrays.values()])) if pbar else itertools.product(*arrays.values())
     copy_of_photon = photon.copy()
     for values in iterable:
         keys_values = dict(zip(arrays.keys(), values))
@@ -77,12 +80,12 @@ def generate_lut(
             target = getattr(photon, 'R', None)
 
         # Update LUT
-        for bound, layer in system.stack:
+        for bound, layer in system.stack.items():
             if layer == variable:
-                depth = bound[1] = bound[0]
+                depth = bound[1] - bound[0]
                 break
         add_simulation_result(simulation_id, variable.mu_s, variable.mu_a, variable.g, depth, target)
-
+    return simulation_id
 
 class LUT:
     def __init__(self,
