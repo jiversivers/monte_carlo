@@ -1,23 +1,10 @@
 import itertools
-import os
 import sqlite3
 from pathlib import Path
 
-from src.photon_canon import Medium, System, Detector, Illumination, hardware
+from photon_canon import Medium, System, Detector, Illumination, hardware
 
 from tqdm import tqdm
-
-try:
-    import cupy as np
-
-    if not np.is_available():
-        raise RuntimeError("CUDA not available; reverting to NumPy.")
-except (ImportError, RuntimeError) as e:
-    import numpy as np
-
-    np.is_available = lambda: False  # Mock the `is_available` method for consistency
-
-print(f"Using {np.__name__}")
 
 
 def main():
@@ -53,6 +40,7 @@ def main():
     con = sqlite3.connect(db_path)
     c = con.cursor()
 
+    # TODO: Clean up simulation with lut.utils calls
     # Table of metadata
     c.execute("""
     CREATE TABLE IF NOT EXISTS mclut_simulations (
