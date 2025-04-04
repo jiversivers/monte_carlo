@@ -1,6 +1,10 @@
 import itertools
+import logging
+import multiprocessing as mp
 from numbers import Real
 from typing import Optional, List, Union, Tuple
+
+from tqdm import tqdm
 
 from ..import_utils import np, NDArray, RegularGridInterpolator
 import pandas as pd
@@ -14,6 +18,34 @@ from ..utils import latest_simulation_id, CON
 c = CON.cursor()
 
 
+def single_sim(args: Tuple[System, Medium, Photon, list[str, ...], list[float, ...], Optional[str]]):
+    """Worker function to simulate a single case"""
+    system, variable, photon, keys, values, output = args
+    keys_values = dict(zip(keys, values))
+    variable.set(**keys_values)
+
+    # Reset and simulate
+    local_photon = photon.copy()
+    if system.detector is not None:
+        system.detector.reset()
+    local_photon.simulate()
+
+    # Get the output
+    if system.detector is not None:
+        target = system.detector.n_detected
+    elif output is not None:
+        target = getattr(photon, output, None)
+    else:
+        target = getattr(photon, 'R', None)
+
+    # Update LUT
+    for bound, layer in system.stack.items():
+        if layer == variable:
+            depth = bound[1] - bound[0]
+            break
+
+    return variable.mu_s, variable.mu_a, variable.g, depth, target
+
 def generate_lut(
         system: System,
         variable: Medium,
@@ -21,7 +53,7 @@ def generate_lut(
         photon: Photon,
         pbar: bool = False,
         output: Optional[str] = None,
-        **kwargs
+        num_workers: int = None,
 ) -> int:
     """
     Simulates photon transport for different optical properties to generate a lookup table (LUT).
@@ -40,7 +72,7 @@ def generate_lut(
     :type photon: Photon
     :param pbar: Whether to show a progress bar.
     :type pbar: bool
-    :param kwargs: Additional optional parameters for the simulation.
+    :param num_workers: Number of parallel processes to simulate photons.
     :return: The ID of the generated LUT of simulation.
     :rtype: int
     """
@@ -49,43 +81,32 @@ def generate_lut(
     simulation_id = add_metadata(n=photon.batch_size, recursive=photon.recurse, detector=system.detector)
     add_system_data(simulation_id, system)
 
-    # Setup progress bar (if desired)
-    iterable = itertools.product(*arrays.values())
-    if pbar:
-        from tqdm import tqdm
-        iterable = tqdm(iterable, total=np.prod([len(arr) for arr in arrays.values()]))
+    # Prepare the list of parameter combinations
+    param_combinations = list(itertools.product(*arrays.values()))
+    keys = list(arrays.keys())
 
-    # Iterate through all permutations of iterables
-    copy_of_photon = photon.copy()
-    for values in iterable:
-        keys_values = dict(zip(arrays.keys(), values))
-        if pbar:
-            iterable.set_description(
-                f' - '.join(f"{k}: {v}" for k, v in keys_values.items())
-            )
-        variable.set(**keys_values)
+    # Prepare arguments for multiprocessing
+    params = [(system, variable, photon, keys, values, output) for values in param_combinations]
 
-        # Reset and simulate
-        photon = copy_of_photon.copy()
-        if system.detector is not None:
-            system.detector.reset()
-        photon.simulate()
+    # Process through all permutations of iterables
+    num_workers = num_workers or mp.cpu_count()
+    with mp.Pool(processes=num_workers) as pool:
+        try:
+            if pbar:
+                results = list(tqdm(pool.imap(single_sim, params), total=len(params), desc=f'Sim ID: {simulation_id}'))
+            else:
+                results = list(pool.imap(single_sim, params))
+        except Exception as e:
+            logging.debug(f'Multiprocessing failed: {e}')
+            results = []
+        finally:
+            pool.close()
+            pool.join()
 
-        # Get the output
-        if system.detector is not None:
-            target = system.detector.n_detected
-        elif output is not None:
-            target = getattr(photon, output, None)
-        else:
-            target = getattr(photon, 'R', None)
-
-        # Update LUT
-        for bound, layer in system.stack.items():
-            if layer == variable:
-                depth = bound[1] - bound[0]
-                break
-        add_simulation_result(simulation_id, variable.mu_s, variable.mu_a, variable.g, depth, target)
+    for result in results:
+        add_simulation_result(simulation_id, *result)
     return simulation_id
+
 
 class LUT:
     def __init__(self,
@@ -98,35 +119,38 @@ class LUT:
         self._interpolator = None
 
     def __call__(self,
-                 *values: Union[Real, Tuple[Real]],
-                 extrapolate: bool = None) -> Union[Real, np.ndarray[Real]]:
-        """Supports 1D, 2D, and 3D lookups."""
+                 *values: Union[Real, np.ndarray],
+                 extrapolate: bool = None) -> Union[Real, np.ndarray]:
+        """Supports 1D, 2D, and 3D lookups with element-wise pairing."""
         if not isinstance(values, tuple):
             values = (values,)
         if not len(values) <= len(self.dimensions):
             raise IndexError(f"LUT supports only up to {len(self.dimensions)}D. {self.dimensions}")
 
-        # Fill in db range for unqueried dimensions
-        pts = []
-        for i, dim in enumerate(self.dimensions):
-            if i >= len(values):
-                c.execute(f"""
-                SELECT DISTINCT {dim} FROM mclut WHERE simulation_id={self.simulation_id}
-                """)
-                fetched = c.fetchall()
-                pts.append(np.unique([row[0] for row in fetched]))
-            else:
-                pts.append([values[i]])
+        # Ensure all inputs are numpy arrays
+        pts = [np.atleast_1d(v) for v in values]
 
-        # Find nearest bounds for interpolation. Here we assume cubic spline interpolation for all parameters.
-        # Build ND mesh to interpolate within
-        mesh = np.meshgrid(*pts, indexing='ij')
-        query_pts = np.array([m.flatten() for m in mesh]).T
+        # Ensure all input arrays have the same shape for element-wise pairing
+        input_shapes = [p.shape for p in pts]
+        if len(set(input_shapes)) > 1:
+            raise ValueError(f"Input arrays must have the same shape for element-wise pairing, got {input_shapes}")
 
-        # Set/Reset extrapolation option
+        # For unqueried dimensions, get full range from the database
+        num_input_dims = len(values)
+        for i in range(num_input_dims, len(self.dimensions)):
+            c.execute(f"SELECT DISTINCT {self.dimensions[i]} FROM mclut WHERE simulation_id={self.simulation_id}")
+            pts.append(np.unique([row[0] for row in c.fetchall()]))
+
+        # Pair elements
+        query_pts = np.column_stack(pts)
+
+        # Interpolation
         interpolator = self.interpolator
-        interpolator.bounds_error = ~extrapolate if extrapolate is not None else self.extrapolate
-        return interpolator(query_pts)
+        interpolator.bounds_error = not extrapolate if extrapolate is not None else not self.extrapolate
+        result = interpolator(query_pts)
+
+        # Return result with the same shape as input arrays
+        return result.reshape(input_shapes[0])
 
     @property
     def interpolator(self) -> RegularGridInterpolator:
