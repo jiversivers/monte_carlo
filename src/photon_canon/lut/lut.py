@@ -1,9 +1,11 @@
 import itertools
 import logging
 import multiprocessing as mp
+from enum import Enum
 from numbers import Real
 from typing import Optional, List, Union, Tuple
 
+from pydantic import PrivateAttr, BaseModel
 from tqdm import tqdm
 
 from ..import_utils import np, NDArray, RegularGridInterpolator
@@ -107,21 +109,29 @@ def generate_lut(
         add_simulation_result(simulation_id, *result)
     return simulation_id
 
+class Dimensions(str, Enum):
+    MU_S = 'mu_s'
+    MU_A = 'mu_a'
+    G = 'g'
 
-class LUT:
-    def __init__(self,
-                 simulation_id: int = latest_simulation_id,
-                 dimensions: List[str] = ['mu_s', 'mu_s', 'g'],
-                 extrapolate: bool = False):
-        self.simulation_id = simulation_id
-        self.dimensions = dimensions
-        self.extrapolate = extrapolate
-        self._interpolator = None
+class ListPortion(Enum):
+    HEAD = slice(None, 5)
+    TAIL = slice(-5, None)
+    ALL = slice(None, None)
+
+class LUT(BaseModel):
+    simulation_id: int = latest_simulation_id,
+    dimensions: List[Dimensions] = [Dimensions.MU_S, Dimensions.MU_A, Dimensions.G],
+    extrapolate: bool = False
+
+    _interpolator: Optional[None] = PrivateAttr(default=None)
+
+    class Config:
+        use_enum_values = True
 
     def __call__(self,
                  *values: Union[Real, np.ndarray],
                  extrapolate: bool = None) -> Union[Real, np.ndarray]:
-        """Supports 1D, 2D, and 3D lookups with element-wise pairing."""
         if not isinstance(values, tuple):
             values = (values,)
         if not len(values) <= len(self.dimensions):
@@ -179,7 +189,7 @@ class LUT:
         return self._interpolator
 
     @classmethod
-    def to_pandas(cls, simulation_id=None):
+    def to_pandas(cls, simulation_id=None) -> pd.DataFrame:
         if simulation_id is None:
             if hasattr(cls, 'simulation_id'):
                 simulation_id = cls.simulation_id
@@ -189,10 +199,46 @@ class LUT:
         df = pd.read_sql_query(query, CON)
         return df
 
-    def surface(self) -> Tuple[Real]:
+    @classmethod
+    def list_available(cls, portion: str = 'ALL') -> List[int]:
+        c.execute("""
+        SELECT DISTINCT id FROM mclut_simulations
+        """)
+        ids = c.fetchall()
+        available = []
+        for id in ids:
+            c.execute(f"""
+            SELECT COUNT(*) from mclut WHERE simulation_id={id[0]}
+            """)
+            if c.fetchone()[0] > 1:
+                available.append(id[0])
+        return available[ListPortion[portion.upper()].value]
+
+    @classmethod
+    def get_layer_data(cls, simulation_id: Optional[int] = None) -> pd.DataFrame:
+        if simulation_id is None:
+            if hasattr(cls, 'simulation_id'):
+                simulation_id = cls.simulation_id
+            else:
+                simulation_id = latest_simulation_id
+        query = f"SELECT * FROM fixed_layers WHERE simulation_id = {simulation_id}"
+        df = pd.read_sql_query(query, CON)
+        return df
+
+    @classmethod
+    def get_metadata(cls, simulation_id: Optional[int] = None, portion: str = 'ALL') -> pd.DataFrame:
+        query = f"SELECT * FROM mclut_simulations"
+        if simulation_id is None:
+            if hasattr(cls, 'simulation_id'):
+                simulation_id = cls.simulation_id
+                query += f" WHERE id = {simulation_id}"
+        df = pd.read_sql_query(query, CON)
+        return df[ListPortion[portion.upper()].value]
+
+    def surface(self) -> Tuple[Real, Real, Real]:
         df = self.to_pandas()
-        x = df['mu_s'].unique()
-        y = df['mu_a'].unique()
+        x = df[self.dimensions[0]].unique()
+        y = df[self.dimensions[1]].unique()
         X, Y = np.meshgrid(x, y, indexing='ij')
         Z = np.reshape(df['output'], (len(x), len(y)))
         return X, Y, Z
