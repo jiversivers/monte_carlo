@@ -2,9 +2,10 @@ import functools
 from typing import Tuple, Callable
 
 from scipy.integrate import quad
-from transformers import pipeline
 
 from ..import_utils import np
+
+# TODO: Check that everything in these functions will vectorize
 
 def fresnel_equation(alpha_i: float = 0, n_rel: float = 1) -> float:
     cos_alpha_t = np.sqrt(1 - np.sin(alpha_i / n_rel) ** 2)
@@ -24,9 +25,8 @@ def cylindrical_distance(rtz: Tuple[float, float, float], rtz_prime: Tuple[float
     return np.sqrt((r - r_prime) ** 2 + r * r_prime * np.cos(theta - theta_prime) + (z - z_prime) ** 2)
 
 def diffusion_approximation(
-        mu_s: float, mu_a: float,  r: float = 1, alpha_i: float = 0, n_rel: float = 1.33, g: float = 0.9
+        mu_s: float, mu_a: float, r: float = 1, alpha_i: float = 0, n_rel: float = 1.33, g: float = 0.9
 ) -> float:
-
     # Reduced scattering coefficient
     mu_s_prime = (1 - g) * mu_s
 
@@ -101,7 +101,8 @@ def create_diffusion_approximation(
 def create_integrated_diffusion_approximation(
         r_range: Tuple[float, float], alpha_i: float = 0, n_rel: float = 1.33, g: float = 0.9
 ) -> Callable[[float, float], float]:
-    integrand = functools.partial(diffusion_approximation, alpha_i=alpha_i, n_rel=n_rel, g=g)
+    def integrand(r: float, mu_s: float, mu_a: float) -> float:
+        return diffusion_approximation(mu_s=mu_s, mu_a=mu_a, r=r, alpha_i=alpha_i, n_rel=n_rel, g=g)
 
     def integrated_diffusion_approximation(mu_s: float, mu_a: float) -> float:
         result, err = quad(integrand, r_range[0], r_range[1], args=(mu_s, mu_a))
