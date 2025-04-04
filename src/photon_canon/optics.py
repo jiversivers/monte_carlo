@@ -8,7 +8,7 @@ from typing import Union, Optional, Iterable, Tuple, Callable, List, Dict, Any
 from matplotlib import pyplot as plt
 from pydantic import BaseModel, field_validator, model_validator
 
-from .hardware import ring_pattern, cone_of_acceptance, ID, OD, THETA
+from .hardware import create_hollow_cone_beam, create_cone_of_acceptance, ID, OD, THETA, pencil_beams, total_acceptor
 from .utils import sample_spectrum
 from .contrib.bio import calculate_mus
 from .import_utils import np, iterable, NDArray
@@ -118,7 +118,7 @@ class Medium(BaseModel):
 
 class Illumination:
     def __init__(self,
-                 pattern: Callable = ring_pattern((ID, OD), THETA),
+                 pattern: Callable = create_hollow_cone_beam((ID, OD), THETA),
                  spectrum: Optional[Iterable[Real]] = None) -> None:
         self.pattern = pattern
         self.spectrum = spectrum
@@ -131,7 +131,7 @@ class Illumination:
 
 
 class Detector:
-    def __init__(self, acceptor: Callable = cone_of_acceptance(ID), desc: Optional[str] = 'default') -> None:
+    def __init__(self, acceptor: Callable = create_cone_of_acceptance(ID), desc: Optional[str] = 'default') -> None:
         self.acceptor = acceptor
         self.n_total = 0
         self.n_detected = 0
@@ -159,17 +159,11 @@ class Detector:
         self.n_total = 0
         self.n_detected = 0
 
-
-# Default "sampler" to start photons straight down at origin
-pencil_beam = Illumination(lambda n: (np.repeat(np.array((0, 0, 0))[np.newaxis, ...], n, axis=0),
-                                      np.repeat(np.array((0, 0, 1))[np.newaxis, ...], n, axis=0)))
-
-
 class System:
     def __init__(self, *args,
                  surrounding_n: float = 1,
-                 illuminator: Optional[Illumination] = pencil_beam,
-                 detector: Optional[Tuple[Detector, float]] = (None, None)) -> None:
+                 illuminator: Optional[Illumination] = Illumination(pencil_beams),
+                 detector: Tuple[Detector, float] = (Detector(total_acceptor), 0)) -> None:
         """
         Create a system of optical mediums and its surroundings that hold the optical properties and can determine the
         medium of a location as well as interfaces crossing given two locations. The blocks are constructed top down in
@@ -488,7 +482,7 @@ class IndexableProperty(np.ndarray):
             item.normalize = False
         return item
 
-
+# TODO: Make this work with 1 photon the same it does for batches
 class Photon:
     class Photon:
         """
@@ -749,12 +743,13 @@ class Photon:
 
         :param kwargs: Keyword arguments representing attributes to overwrite in the copied object.
         :type kwargs: dict
-        :return: A new Photon object that is a deep copy of the original, with overwritten attributes if provided.
+        :return: A new Photon object that is a deep copy of the original -- except it points to the same system -- with
+            overwritten attributes if provided.
         :rtype: Photon
         """
 
         new_obj = copy.deepcopy(self)
-
+        new_obj.system = self.system
         # Check for kwarg overwrites
         for key, value in kwargs.items():
             if hasattr(new_obj, key):
@@ -909,7 +904,11 @@ class Photon:
         :rtype: np.bool_
         """
 
-        self._is_terminated = np.all([medium is self.system.surroundings for medium in self.medium] | (self.weights <= 0.0))
+        self._is_terminated = np.all(
+            [medium is self.system.surroundings for medium in self.medium] |  # Outside the system
+            (self.weights <= 0.0) |  # Fully absorbed
+            np.any(np.isinf(self.location_coordinates) | np.isnan(self.location_coordinates), axis=1)  # At infinite
+        )
         return self._is_terminated
 
     def headed_into(self, mediums: Optional[NDArray[Union[Medium, Tuple[Medium, Medium]]]] = None) -> NDArray[Medium]:
@@ -949,6 +948,7 @@ class Photon:
 
         return headed_into
 
+    # TODO: Add fluorescence support (dont forget to consider quantum yield < 1)
     def absorb(self) -> None:
         """
         Decrements the weights of the photon batch according to the albedo of the current medium.
