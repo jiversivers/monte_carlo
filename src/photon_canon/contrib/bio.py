@@ -2,13 +2,12 @@ import importlib.resources
 from numbers import Real
 from typing import Union, Iterable, Tuple
 
-import numpy as np
 import pandas as pd
-from numpy._typing import NDArray
+from ..import_utils import np, NDArray, interp1d
 
 # Read data file for function usage
 with importlib.resources.open_text('photon_canon.data', "hbo2_hb.tsv") as f:
-    df = pd.read_csv(f, sep='\t', skiprows=1)
+    df = pd.read_csv(f, sep='\t', skiprows=1)[1:]
 wl, hbo2, dhb = df['lambda'], df['hbo2'], df['hb']
 wl = np.array([float(w) for w in wl[1:]])
 hbo2 = np.array([float(h) for h in hbo2[1:]])
@@ -77,3 +76,48 @@ def calculate_mus(a: Real = 1,
 
     mu_a = np.log(10) * np.sum(ci * epsilons, axis=0)  # Absorption coefficient, cm^-1
     return mu_s, mu_a, wl
+
+
+def hemoglobin_mus(a: Real = 1,
+                   b: Real = 1,
+                   t: Real = tHb,
+                   s: Real = sO2,
+                   wavelengths: Iterable[Real] = wl,
+                   force_feasible: bool = True) -> Union[Tuple[Real, Real, Real], Tuple[NDArray, NDArray, NDArray]]:
+    """
+        Computes the reduced scattering coefficient (μs') for hemoglobin solutions
+        based on given absorption coefficients of oxyhemoglobin (HbO2) and deoxyhemoglobin (Hb).
+
+        This function interpolates the extinction coefficients of HbO2 and Hb
+        at specified wavelengths using cubic interpolation and calculates the
+        corresponding μs' values.
+
+        :param a: Scaling factor for the reduced scattering coefficient (default: 1).
+        :type a: Real
+        :param b: Scattering power exponent (default: 1).
+        :type b: Real
+        :param t: Total hemoglobin concentration (tHb) in mol/L (default: `tHb`).
+        :type t: Real
+        :param s: Oxygen saturation (sO2) as a fraction (0 to 1) (default: `sO2`).
+        :type s: Real
+        :param wavelengths: Array of wavelengths (in nm) at which to compute the values (default: `wl`).
+        :type wavelengths: Iterable[Real]
+
+        :return: A tuple containing:
+                 - The reduced scattering coefficient (μs') at each wavelength.
+                 - The interpolated extinction coefficient for HbO2.
+                 - The interpolated extinction coefficient for Hb.
+        :rtype: Tuple[Real, Real, Real] or Tuple[NDArray, NDArray, NDArray]
+
+        :notes:
+            - The extinction coefficients for HbO2 and Hb are interpolated using cubic
+              interpolation from a predefined dataset.
+            - Extrapolation is used for wavelengths outside the dataset range.
+            - The calculation assumes a power-law dependence on wavelength for scattering.
+        """
+    hbo2_interp = interp1d(wl, hbo2, kind='cubic', fill_value='extrapolate')
+    dhb_interp = interp1d(wl, dhb, kind='cubic', fill_value='extrapolate')
+    t_conc = t / 64500
+    epsilons = (hbo2_interp(wavelengths), dhb_interp(wavelengths))
+    ci = (s * t_conc, (1 - s) * t_conc)
+    return calculate_mus(a, b, ci, epsilons, wavelengths, wavelength0=650, force_feasible=force_feasible)
