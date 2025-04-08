@@ -120,8 +120,8 @@ class ListPortion(Enum):
     ALL = slice(None, None)
 
 class LUT(BaseModel):
-    simulation_id: int = latest_simulation_id,
-    dimensions: List[Dimensions] = [Dimensions.MU_S, Dimensions.MU_A, Dimensions.G],
+    simulation_id: int = latest_simulation_id
+    dimensions: List[Dimensions] = [Dimensions.MU_S, Dimensions.MU_A, Dimensions.G]
     extrapolate: bool = False
 
     _interpolator: Optional[None] = PrivateAttr(default=None)
