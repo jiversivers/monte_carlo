@@ -9,15 +9,16 @@ from ..import_utils import np, NDArray, interp1d
 with importlib.resources.open_text('photon_canon.data', "hbo2_hb.tsv") as f:
     df = pd.read_csv(f, sep='\t', skiprows=1)[1:]
 wl, hbo2, dhb = df['lambda'], df['hbo2'], df['hb']
-wl = np.array([float(w) for w in wl[1:]])
-hbo2 = np.array([float(h) for h in hbo2[1:]])
-dhb = np.array([float(h) for h in dhb[1:]])
-eps = np.stack((hbo2, dhb))
+
+# Extract arrays and convert to mu_a units (cm-1)
+wl = np.array([float(w) for w in wl])
+hbo2 = np.array([float(h) for h in hbo2])
+dhb = np.array([float(h) for h in dhb])
+eps = np.log(10) * np.stack((hbo2, dhb)) / 64500
 
 # Calculate some defaults (good for initial guesses)
-tHb = 4
-tHb /= 64500  # molar mass of hemoglobin
-sO2 = 0.98
+tHb = 150
+sO2 = 0.5
 
 
 def calculate_mus(a: Real = 1,
@@ -33,29 +34,29 @@ def calculate_mus(a: Real = 1,
     try:
         # Simple 1 to 1 ratio of multiple in list-likes
         if isinstance(ci, (list, tuple, np.ndarray)):
-            assert len(ci) == len(epsilons), AssertionError(msg.format(len(ci), len(wavelength)))
+            assert len(ci) == len(epsilons), msg.format(len(ci), len(wavelength))
         # or 1 ci and either a single list-like OR a one element list-like where that element is list-like
         elif isinstance(ci, (int, float)):
             if isinstance(epsilons[0], (list, tuple, np.ndarray)):
-                assert len(epsilons) == 1, AssertionError(msg.format(1, len(epsilons)))
+                assert len(epsilons) == 1,msg.format(1, len(epsilons))
 
         # Check cs make sense
         if force_feasible:
             msg = 'Concentrations cannot be negative'
             if isinstance(ci, (list, tuple, np.ndarray)):
-                assert np.all(np.array([c >= 0 for c in ci])), AssertionError(msg)
+                assert np.all(np.array([c >= 0 for c in ci])), msg
             elif isinstance(ci, (int, float)):
-                assert ci >= 0, AssertionError(msg)
+                assert ci >= 0, msg
 
         # Check that wavelengths and epsilons match up
         msg = (f'A spectrum of molar absorptivity must be included with each spectrum. '
                f'You gave {len(wavelength)} wavelengths but molar absorptivity had {len(epsilons[0])} elements.')
         # Either each element of the epsilons has its own element for the wavelengths
         if isinstance(epsilons[0], (list, tuple, np.ndarray)):
-            assert np.all(np.array([len(e) == len(wavelength) for e in epsilons])), AssertionError(msg)
+            assert np.all(np.array([len(e) == len(wavelength) for e in epsilons])), msg
         # Or there is only one species, and it has its own elements for all wavelengths
         elif isinstance(epsilons[0], (int, float)):
-            assert len(epsilons) == len(wavelength), AssertionError(msg)
+            assert len(epsilons) == len(wavelength), msg
 
     except AssertionError as e:
         raise ValueError(e)
@@ -74,7 +75,7 @@ def calculate_mus(a: Real = 1,
         ci = np.asarray(ci)
         ci = ci.reshape(-1, 1)
 
-    mu_a = np.log(10) * np.sum(ci * epsilons, axis=0)  # Absorption coefficient, cm^-1
+    mu_a = np.sum(ci * epsilons, axis=0)  # Absorption coefficient, cm^-1
     return mu_s, mu_a, wl
 
 
@@ -92,11 +93,13 @@ def hemoglobin_mus(a: Real = 1,
         at specified wavelengths using cubic interpolation and calculates the
         corresponding μs' values.
 
+        :param force_feasible: Option to prevent impossible values (like negative concentrations) (default: True)
+        :type force_feasible: bool
         :param a: Scaling factor for the reduced scattering coefficient (default: 1).
         :type a: Real
         :param b: Scattering power exponent (default: 1).
         :type b: Real
-        :param t: Total hemoglobin concentration (tHb) in mol/L (default: `tHb`).
+        :param t: Total hemoglobin concentration (tHb) in g/L (default: `tHb`).
         :type t: Real
         :param s: Oxygen saturation (sO2) as a fraction (0 to 1) (default: `sO2`).
         :type s: Real
@@ -105,8 +108,8 @@ def hemoglobin_mus(a: Real = 1,
 
         :return: A tuple containing:
                  - The reduced scattering coefficient (μs') at each wavelength.
-                 - The interpolated extinction coefficient for HbO2.
-                 - The interpolated extinction coefficient for Hb.
+                 - The interpolated extinction coefficient for THb.
+                 - The wavelengths of the measures (passed unchanged from input, useful for defaulting and reusing)
         :rtype: Tuple[Real, Real, Real] or Tuple[NDArray, NDArray, NDArray]
 
         :notes:
@@ -117,7 +120,6 @@ def hemoglobin_mus(a: Real = 1,
         """
     hbo2_interp = interp1d(wl, hbo2, kind='cubic', fill_value='extrapolate')
     dhb_interp = interp1d(wl, dhb, kind='cubic', fill_value='extrapolate')
-    t_conc = t / 64500
     epsilons = (hbo2_interp(wavelengths), dhb_interp(wavelengths))
-    ci = (s * t_conc, (1 - s) * t_conc)
+    ci = (s * t, (1 - s) * t)
     return calculate_mus(a, b, ci, epsilons, wavelengths, wavelength0=650, force_feasible=force_feasible)
