@@ -1,7 +1,7 @@
 import warnings
 from numbers import Real
 from pathlib import Path
-from typing import Tuple, Iterable
+from typing import Tuple, Iterable, Union, Callable
 
 import sqlite3
 
@@ -44,3 +44,15 @@ def sample_spectrum(wavelengths: Iterable[Real],
 
     # Interpolate value of sample from CDF
     return np.interp(i, cdf, wavelengths)
+
+def model_reflectance(model: Callable[[float, float, ...], Union[float, np.ndarray]],
+                      mu_s: np.ndarray[float], mu_a: np.ndarray[float], vectorize: bool = False,
+                      **kwargs) -> np.ndarray[float]:
+    if vectorize:
+        rd = model(mu_s, mu_a, **kwargs)
+    else:
+        rd = []
+        for mus, mua in zip(mu_s, mu_a):
+            rd.append(model(mus, mua, **kwargs))
+        rd = np.array(rd)
+    return rd

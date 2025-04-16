@@ -1,9 +1,10 @@
 import importlib.resources
 from numbers import Real
-from typing import Union, Iterable, Tuple
+from typing import Union, Iterable, Tuple, Callable
 
 import pandas as pd
 from ..import_utils import np, NDArray, interp1d
+from ..utils import model_reflectance
 
 # Read data file for function usage
 with importlib.resources.open_text('photon_canon.data', "hbo2_hb.tsv") as f:
@@ -74,7 +75,6 @@ def calculate_mus(a: Real = 1,
     if isinstance(ci, (list, tuple, np.ndarray)):
         ci = np.asarray(ci)
         ci = ci.reshape(-1, 1)
-
     mu_a = np.sum(ci * epsilons, axis=0)  # Absorption coefficient, cm^-1
     return mu_s, mu_a, wl
 
@@ -118,8 +118,18 @@ def hemoglobin_mus(a: Real = 1,
             - Extrapolation is used for wavelengths outside the dataset range.
             - The calculation assumes a power-law dependence on wavelength for scattering.
         """
-    hbo2_interp = interp1d(wl, hbo2, kind='cubic', fill_value='extrapolate')
-    dhb_interp = interp1d(wl, dhb, kind='cubic', fill_value='extrapolate')
+    hbo2_interp = interp1d(wl, eps[0], kind='cubic', fill_value='extrapolate')
+    dhb_interp = interp1d(wl, eps[1], kind='cubic', fill_value='extrapolate')
     epsilons = (hbo2_interp(wavelengths), dhb_interp(wavelengths))
     ci = (s * t, (1 - s) * t)
     return calculate_mus(a, b, ci, epsilons, wavelengths, wavelength0=650, force_feasible=force_feasible)
+
+
+def model_from_hemoglobin(model: Callable[[float, float, ...], float],
+                          wavelengths: np.ndarray[Union[int, float]],
+                          a: np.ndarray[float], b: np.ndarray[float],
+                          t: np.ndarray[float], s: np.ndarray[float],
+                          **kwargs) -> np.ndarray[float]:
+    """Forwarding function to streamline Hb/sO2 modelling"""
+    mu_s, mu_a, _ = hemoglobin_mus(a, b, t, s, wavelengths)
+    return model_reflectance(model, mu_s, mu_a, **kwargs)
