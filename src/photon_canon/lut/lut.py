@@ -123,6 +123,7 @@ class LUT(BaseModel):
     simulation_id: int = latest_simulation_id
     dimensions: List[Dimensions] = [Dimensions.MU_S, Dimensions.MU_A, Dimensions.G]
     extrapolate: bool = False
+    scale: float = 1
 
     _interpolator: Optional[None] = PrivateAttr(default=None)
 
@@ -160,7 +161,7 @@ class LUT(BaseModel):
         result = interpolator(query_pts)
 
         # Return result with the same shape as input arrays
-        return result.reshape(input_shapes[0])
+        return result.reshape(input_shapes[0]) / self.scale
 
     @property
     def interpolator(self) -> RegularGridInterpolator:
