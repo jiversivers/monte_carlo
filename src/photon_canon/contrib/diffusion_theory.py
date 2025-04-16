@@ -102,7 +102,7 @@ def create_integrated_diffusion_approximation(
         r_range: Tuple[float, float], alpha_i: float = 0, n_rel: float = 1.33, g: float = 0.9
 ) -> Callable[[float, float], float]:
     def integrand(r: float, mu_s: float, mu_a: float) -> float:
-        return diffusion_approximation(mu_s=mu_s, mu_a=mu_a, r=r, alpha_i=alpha_i, n_rel=n_rel, g=g)
+        return 2 * np.pi * r * diffusion_approximation(mu_s=mu_s, mu_a=mu_a, r=r, alpha_i=alpha_i, n_rel=n_rel, g=g)
 
     def integrated_diffusion_approximation(mu_s: float, mu_a: float) -> float:
         result, err = quad(integrand, r_range[0], r_range[1], args=(mu_s, mu_a))
