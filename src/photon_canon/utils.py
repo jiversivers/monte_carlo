@@ -1,3 +1,4 @@
+import functools
 import warnings
 from numbers import Real
 from pathlib import Path
@@ -55,4 +56,7 @@ def model_reflectance(model: Callable[[float, float, ...], Union[float, np.ndarr
         for mus, mua in zip(mu_s, mu_a):
             rd.append(model(mus, mua, **kwargs))
         rd = np.array(rd)
-    return rd
+    return rd.squeeze()
+
+
+
