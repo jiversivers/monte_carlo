@@ -100,9 +100,9 @@ def simulate_asset(*args):
     ID = pc.hardware.ID
     theta = np.arctan(-OD / pc.hardware.WD)
 
-    sampler = pc.hardware.ring_pattern((ID, OD), theta)
+    sampler = pc.hardware.create_hollow_cone_beam((ID, OD), theta)
     LED = pc.Illumination(pattern=sampler)
-    detector = pc.Detector(pc.hardware.cone_of_acceptance(ID))
+    detector = pc.Detector(pc.hardware.create_cone_of_acceptance(ID))
 
     n = 250
 
