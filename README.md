@@ -18,7 +18,7 @@ compatibility with user-defined samplers. Additionally, custom `Detector` object
 `Photon` exit locations, to provide precise forward-problem modelling that can decrease loss in inverse fitting.
 
 `System` and `Photon` objects also include plot features to allow for qualitatively troubleshooting and checks for
-expected behaviors. These also are just fun to look at. 
+expected behaviors. These also are just fun to look at.
 
 ![Current simulation plot](assets/simulation.png)
 
