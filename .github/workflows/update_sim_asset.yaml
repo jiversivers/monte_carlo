@@ -30,6 +30,7 @@ jobs:
         run: |
           git fetch
           git checkout main
+          git pull
 
       - name: Update asset
         run: python .github/scripts/make_asset.py
