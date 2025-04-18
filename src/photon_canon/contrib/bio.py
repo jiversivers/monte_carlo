@@ -1,8 +1,12 @@
 import importlib.resources
+import warnings
 from numbers import Real
-from typing import Union, Iterable, Tuple, Callable
+from typing import Union, Iterable, Tuple, Callable, Optional
 
 import pandas as pd
+from tqdm.contrib import itertools
+import scipy.optimize as opt
+
 from ..import_utils import np, NDArray, interp1d
 from ..utils import model_reflectance
 
@@ -62,6 +66,7 @@ def calculate_mus(a: Real = 1,
     except AssertionError as e:
         raise ValueError(e)
 
+    # Array everything as needed
     wavelength = np.asarray(wavelength)  # Wavelengths of measurements (nm)
     mu_s = a * (wavelength / wavelength0) ** -b  # Reduced scattering coefficient, cm^-1
 
@@ -133,3 +138,35 @@ def model_from_hemoglobin(model: Callable[[float, float, ...], float],
     """Forwarding function to streamline Hb/sO2 modelling"""
     mu_s, mu_a, _ = hemoglobin_mus(a, b, t, s, wavelengths)
     return model_reflectance(model, mu_s, mu_a, **kwargs)
+
+
+def fit_hemoglobin_model(model: Callable[[np.ndarray[float], float, float, float, float], np.ndarray[float]],
+                         wavelengths: np.ndarray[float], experimental: np.ndarray[float], guess: np.ndarray[float],
+                         bounds: Optional[np.ndarray[float]] = None, **kwargs
+                         ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    # Get image shape
+    image_shape = experimental.shape
+
+    # Create 0 output arrays (ignore 0th dim, spectral)
+    a_image = np.zeros(image_shape[1:])
+    b_image = np.zeros(image_shape[1:])
+    t_image = np.zeros(image_shape[1:])
+    s_image = np.zeros(image_shape[1:])
+
+    for i, j in itertools.product(range(image_shape[1]), range(image_shape[2])):
+        r = experimental[:, i, j]
+        if not np.any(np.isnan(r)):
+            try:
+                params, _ = opt.curve_fit(model, wavelengths, r, p0=guess, bounds=bounds, **kwargs)
+            except RuntimeError as e:
+                warnings.warn(str(e))
+                params = [0] * 4
+        else:
+            params = [0] * 4
+
+        a_image[i, j] = params[0]
+        b_image[i, j] = params[1]
+        t_image[i, j] = params[2]
+        s_image[i, j] = params[3]
+
+    return a_image, b_image, t_image, s_image
