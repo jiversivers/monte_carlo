@@ -12,5 +12,5 @@ a_yellow *= 3.4/45
 a_green *= 3.4/45
 a_blue *= 3.4/45
 
-def make_mix(*, red=0, yellow=0, green=0, blue=0):
+def make_mix(*, red: float = 0, yellow: float = 0, green: float = 0, blue: float = 0):
     return np.array(red * a_red + yellow * a_yellow + green * a_green + blue * a_blue)
