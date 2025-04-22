@@ -1,11 +1,10 @@
 import itertools
 import logging
 import multiprocessing as mp
-from enum import Enum
 from numbers import Real
 from typing import Optional, List, Union, Tuple
 
-from pydantic import PrivateAttr, BaseModel
+from pydantic import PrivateAttr, BaseModel, ConfigDict
 from tqdm import tqdm
 
 from ..import_utils import np, NDArray, RegularGridInterpolator
@@ -14,7 +13,8 @@ import pandas as pd
 from ..optics import System, Medium
 from ..optics import Photon
 
-from ..lut.utils import add_metadata, add_system_data, add_simulation_result
+from ..lut.utils import add_metadata, add_system_data, add_simulation_result, Dimensions, ListPortion, \
+    classOrInstanceMethod
 from ..utils import latest_simulation_id, CON
 
 c = CON.cursor()
@@ -107,17 +107,9 @@ def generate_lut(
 
     for result in results:
         add_simulation_result(simulation_id, *result)
+
+    c.close()
     return simulation_id
-
-class Dimensions(str, Enum):
-    MU_S = 'mu_s'
-    MU_A = 'mu_a'
-    G = 'g'
-
-class ListPortion(Enum):
-    HEAD = slice(None, 5)
-    TAIL = slice(-5, None)
-    ALL = slice(None, None)
 
 class LUT(BaseModel):
     simulation_id: int = latest_simulation_id
@@ -125,10 +117,12 @@ class LUT(BaseModel):
     extrapolate: bool = False
     scale: float = 1
 
-    _interpolator: Optional[None] = PrivateAttr(default=None)
+    _interpolator: Optional[RegularGridInterpolator] = PrivateAttr(default=None)
 
     class Config:
+        ignored_types = (classOrInstanceMethod,)
         use_enum_values = True
+        arbitrary_types_allowed = True
 
     def __call__(self,
                  *values: Union[Real, np.ndarray],
@@ -189,22 +183,21 @@ class LUT(BaseModel):
 
         return self._interpolator
 
-    @classmethod
-    def to_pandas(cls, simulation_id=None) -> pd.DataFrame:
+    @classOrInstanceMethod
+    def to_pandas(self, cls, simulation_id=None) -> pd.DataFrame:
         if simulation_id is None:
-            if hasattr(cls, 'simulation_id'):
-                simulation_id = cls.simulation_id
-            else:
-                simulation_id = latest_simulation_id
+            simulation_id = latest_simulation_id
         query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
+        print(simulation_id)
         df = pd.read_sql_query(query, CON)
         return df
 
-    @classmethod
-    def list_available(cls, portion: str = 'ALL') -> List[int]:
+    @classOrInstanceMethod
+    def list_available(self, cls, portion: str = 'ALL') -> List[int]:
         c.execute("""
         SELECT DISTINCT id FROM mclut_simulations
         """)
+        portion = ListPortion[portion.upper()].value
         ids = c.fetchall()
         available = []
         for id in ids:
@@ -213,10 +206,10 @@ class LUT(BaseModel):
             """)
             if c.fetchone()[0] > 1:
                 available.append(id[0])
-        return available[ListPortion[portion.upper()].value]
+        return available[portion]
 
-    @classmethod
-    def get_layer_data(cls, simulation_id: Optional[int] = None) -> pd.DataFrame:
+    @classOrInstanceMethod
+    def get_layer_data(self, cls, simulation_id: Optional[int] = None) -> pd.DataFrame:
         if simulation_id is None:
             if hasattr(cls, 'simulation_id'):
                 simulation_id = cls.simulation_id
@@ -226,20 +219,23 @@ class LUT(BaseModel):
         df = pd.read_sql_query(query, CON)
         return df
 
-    @classmethod
-    def get_metadata(cls, simulation_id: Optional[int] = None, portion: str = 'ALL') -> pd.DataFrame:
+    @classOrInstanceMethod
+    def get_metadata(self, cls, simulation_id: Optional[int] = None, portion: str = 'ALL') -> pd.DataFrame:
         query = f"SELECT * FROM mclut_simulations"
+        portion = ListPortion[portion.upper()].value
         if simulation_id is None:
             if hasattr(cls, 'simulation_id'):
                 simulation_id = cls.simulation_id
                 query += f" WHERE id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
-        return df[ListPortion[portion.upper()].value]
+        return df[portion]
 
     def surface(self) -> Tuple[Real, Real, Real]:
-        df = self.to_pandas()
+        df = self.to_pandas(self.simulation_id)
         x = df[self.dimensions[0]].unique()
         y = df[self.dimensions[1]].unique()
         X, Y = np.meshgrid(x, y, indexing='ij')
         Z = np.reshape(df['output'], (len(x), len(y)))
+        if hasattr(self, 'scale'):
+            Z /= self.scale
         return X, Y, Z

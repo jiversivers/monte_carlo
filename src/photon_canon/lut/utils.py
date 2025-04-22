@@ -1,4 +1,5 @@
 import sqlite3
+from enum import Enum
 from numbers import Real
 from pathlib import Path
 from typing import Union, Iterable
@@ -13,6 +14,25 @@ db_dir.mkdir(parents=True, exist_ok=True)
 db_path = db_dir / "lut.db"
 con = sqlite3.connect(db_path)
 c = con.cursor()
+
+class Dimensions(str, Enum):
+    MU_S = 'mu_s'
+    MU_A = 'mu_a'
+    G = 'g'
+
+class ListPortion(Enum):
+    HEAD = slice(None, 5)
+    TAIL = slice(-5, None)
+    ALL = slice(None, None)
+
+class classOrInstanceMethod(object):
+    def __init__(self, func):
+        self.func = func
+    def __get__(self, instance, owner):
+
+        def func(*args, **kwargs):
+            return self.func(instance, owner, *args, **kwargs)
+        return func
 
 def add_metadata(n=None, recursive=False, detector=None) -> int:
     # Parse to get metadata
