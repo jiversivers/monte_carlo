@@ -20,20 +20,47 @@ a_yellow *= s
 a_green *= s
 a_blue *= s
 
-def make_mix(wavelengths: np.ndarray = None, *, red: float = 0, yellow: float = 0, green: float = 0, blue: float = 0) -> np.ndarray[float]:
-    if wavelengths is None:
-        wavelengths = raw_wl
-    mask = raw_wl.isin(wavelengths)
-    return np.array(red * a_red[mask] + yellow * a_yellow[mask] + green * a_green[mask] + blue * a_blue[mask])
-
 # Load pre-mixed validation stocks.
 # Stock A: 0.125 mL / mL red, 0.175 mL / mL green in water
 # Stock B: 0.600 mL / mL yellow, 0.050 mL / mL blue in water
 # Stocks were diluted down for absorbance measurements to 10 uL/mL stock
 with importlib.resources.open_text('photon_canon.data', "validation_stock_absorbance.csv") as f:
     df = pd.read_csv(f)
-premix_wl, stock_a, stock_b = df['Wavelength'], df['stock_a'], df['stock_b']
+premix_wl, a_stock_a, a_stock_b = df['Wavelength'], df['stock_a'], df['stock_b']
 
 # Normalize to 1 uL / mL
-stock_a /= 10
-stock_b /= 10
+a_stock_a /= 10
+a_stock_b /= 10
+
+def make_mix(wavelengths: np.ndarray = None, *,
+             red: float = 0, yellow: float = 0, green: float = 0, blue: float = 0,
+             stock_a: float = 0, stock_b: float = 0) -> np.ndarray[float]:
+
+    # Raw colors
+    if wavelengths is None:
+        wl = raw_wl
+    else:
+        wl = wavelengths
+
+    mask = raw_wl.isin(wl)
+    a_r = a_red[mask].values
+    a_y = a_yellow[mask].values
+    a_g = a_green[mask].values
+    a_b = a_blue[mask].values
+
+    # Premixed
+    if wavelengths is None:
+        wl = premix_wl
+
+    mask = premix_wl.isin(wl)
+    a_sa = a_stock_a[mask].values
+    a_sb = a_stock_b[mask].values
+
+    return np.array(
+          red * a_r
+        + yellow * a_y
+        + green * a_g
+        + blue * a_b
+        + stock_a * a_sa
+        + stock_b * a_sb
+    )
