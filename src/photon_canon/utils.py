@@ -1,4 +1,3 @@
-import functools
 import warnings
 from numbers import Real
 from pathlib import Path
@@ -20,7 +19,7 @@ try:
     latest_simulation_id = c.fetchone()[0]
 except sqlite3.OperationalError:
     latest_simulation_id = None
-    warnings.warn('No default LUT found. Simulate one if you have not.')
+    warnings.warn("No default LUT found. Simulate one if you have not.")
 
 
 def simulate(system: "System", n: int, **kwargs) -> Tuple[float, float, float]:
@@ -29,8 +28,7 @@ def simulate(system: "System", n: int, **kwargs) -> Tuple[float, float, float]:
     return photons.T, photons.R, photons.A
 
 
-def sample_spectrum(wavelengths: Iterable[Real],
-                    spectrum: Iterable[Real]):
+def sample_spectrum(wavelengths: Iterable[Real], spectrum: Iterable[Real]):
     wavelengths = np.asarray(wavelengths)
     spectrum = np.asarray(spectrum)
 
@@ -46,9 +44,14 @@ def sample_spectrum(wavelengths: Iterable[Real],
     # Interpolate value of sample from CDF
     return np.interp(i, cdf, wavelengths)
 
-def model_reflectance(model: Callable[[float, float, ...], Union[float, np.ndarray]],
-                      mu_s: np.ndarray[float], mu_a: np.ndarray[float], vectorize: bool = False,
-                      **kwargs) -> np.ndarray[float]:
+
+def model_reflectance(
+    model: Callable[[float, float, ...], Union[float, np.ndarray]],
+    mu_s: np.ndarray[float],
+    mu_a: np.ndarray[float],
+    vectorize: bool = False,
+    **kwargs
+) -> np.ndarray[float]:
     if vectorize:
         rd = model(mu_s, mu_a, **kwargs)
     else:
@@ -57,6 +60,3 @@ def model_reflectance(model: Callable[[float, float, ...], Union[float, np.ndarr
             rd.append(model(mus, mua, **kwargs))
         rd = np.array(rd)
     return rd.squeeze()
-
-
-

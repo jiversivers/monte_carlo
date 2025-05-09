@@ -13,14 +13,24 @@ import pandas as pd
 from ..optics import System, Medium
 from ..optics import Photon
 
-from ..lut.utils import add_metadata, add_system_data, add_simulation_result, Dimensions, ListPortion, \
-    classOrInstanceMethod
+from ..lut.utils import (
+    add_metadata,
+    add_system_data,
+    add_simulation_result,
+    Dimensions,
+    ListPortion,
+    classOrInstanceMethod,
+)
 from ..utils import latest_simulation_id, CON
 
 c = CON.cursor()
 
 
-def single_sim(args: Tuple[System, Medium, Photon, list[str, ...], list[float, ...], Optional[str]]):
+def single_sim(
+    args: Tuple[
+        System, Medium, Photon, list[str, ...], list[float, ...], Optional[str]
+    ],
+):
     """Worker function to simulate a single case"""
     system, variable, photon, keys, values, output = args
     keys_values = dict(zip(keys, values))
@@ -38,7 +48,7 @@ def single_sim(args: Tuple[System, Medium, Photon, list[str, ...], list[float, .
     elif output is not None:
         target = getattr(photon, output, None)
     else:
-        target = getattr(photon, 'R', None)
+        target = getattr(photon, "R", None)
 
     # Update LUT
     for bound, layer in system.stack.items():
@@ -48,14 +58,15 @@ def single_sim(args: Tuple[System, Medium, Photon, list[str, ...], list[float, .
 
     return variable.mu_s, variable.mu_a, variable.g, depth, target
 
+
 def generate_lut(
-        system: System,
-        variable: Medium,
-        arrays: dict[str, NDArray],
-        photon: Photon,
-        pbar: bool = False,
-        output: Optional[str] = None,
-        num_workers: int = None,
+    system: System,
+    variable: Medium,
+    arrays: dict[str, NDArray],
+    photon: Photon,
+    pbar: bool = False,
+    output: Optional[str] = None,
+    num_workers: int = None,
 ) -> int:
     """
     Simulates photon transport for different optical properties to generate a lookup table (LUT).
@@ -80,7 +91,9 @@ def generate_lut(
     """
 
     # Add LUT metadata to db
-    simulation_id = add_metadata(n=photon.batch_size, recursive=photon.recurse, detector=system.detector)
+    simulation_id = add_metadata(
+        n=photon.batch_size, recursive=photon.recurse, detector=system.detector
+    )
     add_system_data(simulation_id, system)
 
     # Prepare the list of parameter combinations
@@ -88,18 +101,27 @@ def generate_lut(
     keys = list(arrays.keys())
 
     # Prepare arguments for multiprocessing
-    params = [(system, variable, photon, keys, values, output) for values in param_combinations]
+    params = [
+        (system, variable, photon, keys, values, output)
+        for values in param_combinations
+    ]
 
     # Process through all permutations of iterables
     num_workers = num_workers or mp.cpu_count()
     with mp.Pool(processes=num_workers) as pool:
         try:
             if pbar:
-                results = list(tqdm(pool.imap(single_sim, params), total=len(params), desc=f'Sim ID: {simulation_id}'))
+                results = list(
+                    tqdm(
+                        pool.imap(single_sim, params),
+                        total=len(params),
+                        desc=f"Sim ID: {simulation_id}",
+                    )
+                )
             else:
                 results = list(pool.imap(single_sim, params))
         except Exception as e:
-            logging.debug(f'Multiprocessing failed: {e}')
+            logging.debug(f"Multiprocessing failed: {e}")
             results = []
         finally:
             pool.close()
@@ -110,6 +132,7 @@ def generate_lut(
 
     c.close()
     return simulation_id
+
 
 class LUT(BaseModel):
     simulation_id: int = latest_simulation_id
@@ -124,13 +147,15 @@ class LUT(BaseModel):
         use_enum_values = True
         arbitrary_types_allowed = True
 
-    def __call__(self,
-                 *values: Union[Real, np.ndarray],
-                 extrapolate: bool = None) -> Union[Real, np.ndarray]:
+    def __call__(
+        self, *values: Union[Real, np.ndarray], extrapolate: bool = None
+    ) -> Union[Real, np.ndarray]:
         if not isinstance(values, tuple):
             values = (values,)
         if not len(values) <= len(self.dimensions):
-            raise IndexError(f"LUT supports only up to {len(self.dimensions)}D. {self.dimensions}")
+            raise IndexError(
+                f"LUT supports only up to {len(self.dimensions)}D. {self.dimensions}"
+            )
 
         # Ensure all inputs are numpy arrays
         pts = [np.atleast_1d(v) for v in values]
@@ -138,12 +163,16 @@ class LUT(BaseModel):
         # Ensure all input arrays have the same shape for element-wise pairing
         input_shapes = [p.shape for p in pts]
         if len(set(input_shapes)) > 1:
-            raise ValueError(f"Input arrays must have the same shape for element-wise pairing, got {input_shapes}")
+            raise ValueError(
+                f"Input arrays must have the same shape for element-wise pairing, got {input_shapes}"
+            )
 
         # For unqueried dimensions, get full range from the database
         num_input_dims = len(values)
         for i in range(num_input_dims, len(self.dimensions)):
-            c.execute(f"SELECT DISTINCT {self.dimensions[i]} FROM mclut WHERE simulation_id={self.simulation_id}")
+            c.execute(
+                f"SELECT DISTINCT {self.dimensions[i]} FROM mclut WHERE simulation_id={self.simulation_id}"
+            )
             pts.append(np.unique([row[0] for row in c.fetchall()]))
 
         # Pair elements
@@ -151,7 +180,9 @@ class LUT(BaseModel):
 
         # Interpolation
         interpolator = self.interpolator
-        interpolator.bounds_error = not extrapolate if extrapolate is not None else not self.extrapolate
+        interpolator.bounds_error = (
+            not extrapolate if extrapolate is not None else not self.extrapolate
+        )
         result = interpolator(query_pts)
 
         # Return result with the same shape as input arrays
@@ -165,9 +196,10 @@ class LUT(BaseModel):
             results = c.fetchall()
             if results is None or len(results) == 0:
                 raise IOError(
-                    f'No simulations found at id {self.simulation_id}. Run generate_lut '
-                    f'and save results to lut.db before using lookup or try a '
-                    f'different ID.')
+                    f"No simulations found at id {self.simulation_id}. Run generate_lut "
+                    f"and save results to lut.db before using lookup or try a "
+                    f"different ID."
+                )
 
             # If no exact match, check if parameters are within the bounds for interpolation
             *values, output = zip(*results)
@@ -178,7 +210,11 @@ class LUT(BaseModel):
 
             # Interpolation/Extrapolate (if True)
             self._interpolator = RegularGridInterpolator(
-                points, output, method='cubic', bounds_error=not self.extrapolate, fill_value=None
+                points,
+                output,
+                method="cubic",
+                bounds_error=not self.extrapolate,
+                fill_value=None,
             )
 
         return self._interpolator
@@ -188,22 +224,25 @@ class LUT(BaseModel):
         if simulation_id is None:
             simulation_id = latest_simulation_id
         query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
-        print(simulation_id)
         df = pd.read_sql_query(query, CON)
         return df
 
     @classOrInstanceMethod
-    def list_available(self, cls, portion: str = 'ALL') -> List[int]:
-        c.execute("""
+    def list_available(self, cls, portion: str = "ALL") -> List[int]:
+        c.execute(
+            """
         SELECT DISTINCT id FROM mclut_simulations
-        """)
+        """
+        )
         portion = ListPortion[portion.upper()].value
         ids = c.fetchall()
         available = []
         for id in ids:
-            c.execute(f"""
+            c.execute(
+                f"""
             SELECT COUNT(*) from mclut WHERE simulation_id={id[0]}
-            """)
+            """
+            )
             if c.fetchone()[0] > 1:
                 available.append(id[0])
         return available[portion]
@@ -211,7 +250,7 @@ class LUT(BaseModel):
     @classOrInstanceMethod
     def get_layer_data(self, cls, simulation_id: Optional[int] = None) -> pd.DataFrame:
         if simulation_id is None:
-            if hasattr(cls, 'simulation_id'):
+            if hasattr(cls, "simulation_id"):
                 simulation_id = cls.simulation_id
             else:
                 simulation_id = latest_simulation_id
@@ -220,11 +259,13 @@ class LUT(BaseModel):
         return df
 
     @classOrInstanceMethod
-    def get_metadata(self, cls, simulation_id: Optional[int] = None, portion: str = 'ALL') -> pd.DataFrame:
+    def get_metadata(
+        self, cls, simulation_id: Optional[int] = None, portion: str = "ALL"
+    ) -> pd.DataFrame:
         query = f"SELECT * FROM mclut_simulations"
         portion = ListPortion[portion.upper()].value
         if simulation_id is None:
-            if hasattr(cls, 'simulation_id'):
+            if hasattr(cls, "simulation_id"):
                 simulation_id = cls.simulation_id
                 query += f" WHERE id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
@@ -234,8 +275,8 @@ class LUT(BaseModel):
         df = self.to_pandas(self.simulation_id)
         x = df[self.dimensions[0]].unique()
         y = df[self.dimensions[1]].unique()
-        X, Y = np.meshgrid(x, y, indexing='ij')
-        Z = np.reshape(df['output'], (len(x), len(y)))
-        if hasattr(self, 'scale'):
+        X, Y = np.meshgrid(x, y, indexing="ij")
+        Z = np.reshape(df["output"], (len(x), len(y)))
+        if hasattr(self, "scale"):
             Z /= self.scale
         return X, Y, Z

@@ -15,28 +15,35 @@ db_path = db_dir / "lut.db"
 con = sqlite3.connect(db_path)
 c = con.cursor()
 
+
 class Dimensions(str, Enum):
-    MU_S = 'mu_s'
-    MU_A = 'mu_a'
-    G = 'g'
+    MU_S = "mu_s"
+    MU_A = "mu_a"
+    G = "g"
+
 
 class ListPortion(Enum):
     HEAD = slice(None, 5)
     TAIL = slice(-5, None)
     ALL = slice(None, None)
 
+
 class classOrInstanceMethod(object):
     def __init__(self, func):
         self.func = func
+
     def __get__(self, instance, owner):
 
         def func(*args, **kwargs):
             return self.func(instance, owner, *args, **kwargs)
+
         return func
+
 
 def add_metadata(n=None, recursive=False, detector=None) -> int:
     # Parse to get metadata
-    c.execute("""
+    c.execute(
+        """
     CREATE TABLE IF NOT EXISTS mclut_simulations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         photon_count INTEGER NOT NULL,
@@ -44,20 +51,29 @@ def add_metadata(n=None, recursive=False, detector=None) -> int:
         detector BOOLEAN DEFAULT FALSE,
         detector_description TEXT DEFAULT ''
         )
-        """)
+        """
+    )
 
-    c.execute(f"""
+    c.execute(
+        f"""
     INSERT INTO mclut_simulations (
     photon_count, recursive, detector, detector_description
-    ) VALUES (?, ?, ?, ?)""", (
-        n, recursive, detector is not None, detector.desc if detector is not None else ''
-    ))
+    ) VALUES (?, ?, ?, ?)""",
+        (
+            n,
+            recursive,
+            detector is not None,
+            detector.desc if detector is not None else "",
+        ),
+    )
     con.commit()
 
     return c.lastrowid
 
+
 def add_system_data(simulation_id: int, system: System) -> None:
-    c.execute("""
+    c.execute(
+        """
     CREATE TABLE IF NOT EXISTS fixed_layers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     stack_order INTEGER NOT NULL,
@@ -70,36 +86,44 @@ def add_system_data(simulation_id: int, system: System) -> None:
     simulation_id INTEGER NOT NULL,
     FOREIGN KEY (simulation_id) REFERENCES mclut_simulations(id)
     )
-    """)
+    """
+    )
 
     # Generate fixed layer details for table
     fixed_layers = []
     for i, (bound, layer) in enumerate(system.stack.items()):
-        fixed_layers.append((
-            int(i),
-            layer.desc,
-            float(layer.mu_s_at(layer.ref_wavelength)),
-            float(layer.mu_a_at(layer.ref_wavelength)),
-            float(layer.g),
-            float(bound[1] - bound[0]),
-            float(layer.ref_wavelength),
-            int(simulation_id)
-        ))
+        fixed_layers.append(
+            (
+                int(i),
+                layer.desc,
+                float(layer.mu_s_at(layer.ref_wavelength)),
+                float(layer.mu_a_at(layer.ref_wavelength)),
+                float(layer.g),
+                float(bound[1] - bound[0]),
+                float(layer.ref_wavelength),
+                int(simulation_id),
+            )
+        )
 
     # Add details to table
-    c.executemany(f"""
+    c.executemany(
+        f"""
     INSERT INTO fixed_layers (
         stack_order, layer, mu_s, mu_a, g, thickness, ref_wavelength, simulation_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", fixed_layers)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        fixed_layers,
+    )
     con.commit()
 
 
-def add_simulation_result(simulation_id: int,
-                          mu_s: Union[Real, Iterable[Real]],
-                          mu_a: Union[Real, Iterable[Real]],
-                          g: Union[Real, Iterable[Real]],
-                          depth: Union[Real, Iterable[Real]],
-                          output: Union[Real, Iterable[Real]]) -> None:
+def add_simulation_result(
+    simulation_id: int,
+    mu_s: Union[Real, Iterable[Real]],
+    mu_a: Union[Real, Iterable[Real]],
+    g: Union[Real, Iterable[Real]],
+    depth: Union[Real, Iterable[Real]],
+    output: Union[Real, Iterable[Real]],
+) -> None:
     # Ensure all are iterable arays
     arrays = [np.array(val) for val in [mu_s, mu_a, g, depth, output, simulation_id]]
     iters = [arr.ndim == 1 for arr in arrays]
@@ -107,7 +131,7 @@ def add_simulation_result(simulation_id: int,
 
     # Check that sizes are compatible
     if shapes and not np.all(shapes == shapes[0]):
-        raise ValueError('Iterables must have the same shape')
+        raise ValueError("Iterables must have the same shape")
     elif not shapes:
         shapes = [[1]]
 
@@ -122,7 +146,8 @@ def add_simulation_result(simulation_id: int,
     data_tuples = tuple(zip(*arrays))
 
     # Add table (if not exists)
-    c.execute("""
+    c.execute(
+        """
      CREATE TABLE IF NOT EXISTS mclut (
          id INTEGER PRIMARY KEY AUTOINCREMENT,
          mu_s REAL NOT NULL,
@@ -133,12 +158,16 @@ def add_simulation_result(simulation_id: int,
          simulation_id INTEGER NOT NULL,
          FOREIGN KEY (simulation_id) REFERENCES mclut_simulations(id)
          )
-         """)
+         """
+    )
 
     # Add results to db
-    c.executemany(f"""
+    c.executemany(
+        f"""
                 INSERT INTO mclut (
                 mu_s, mu_a, g, depth, output, simulation_id
-                ) VALUES (?, ?, ?, ?, ?, ?)""", data_tuples)
+                ) VALUES (?, ?, ?, ?, ?, ?)""",
+        data_tuples,
+    )
 
     con.commit()
