@@ -151,7 +151,7 @@ class Illumination:
         )
 
     def __repr__(self) -> str:
-        return f"IlluminationObject(pattern=f{self.pattern}, spectrum={self.spectrum})"
+        return f"IlluminationObject(pattern={self.pattern}, spectrum={self.spectrum})"
 
     @property
     def desc(self) -> str:
@@ -203,7 +203,7 @@ class Detector:
         self.n_detected = 0
 
     def __repr__(self) -> str:
-        return f"Detector_object(acceptor=f{self.acceptor})
+        return f"Detector_object(acceptor=f{self.acceptor})"
 
     @property
     def desc(self) -> str:
