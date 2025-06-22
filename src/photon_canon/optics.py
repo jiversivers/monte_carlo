@@ -131,9 +131,11 @@ class Illumination:
         self,
         pattern: Callable = create_hollow_cone_beam((ID, OD), THETA),
         spectrum: Optional[Iterable[Real]] = None,
+        desc: Optional[str] = None
     ) -> None:
         self.pattern = pattern
         self.spectrum = spectrum
+        self.description = desc
 
     def photon(self, batch_size: int = 50000, **kwargs: Any) -> Photon:
         location, direction = self.pattern(batch_size)
@@ -148,17 +150,26 @@ class Illumination:
             **kwargs
         )
 
+    def __repr__(self) -> str:
+        return f"IlluminationObject(pattern=f{self.pattern}, spectrum={self.spectrum})"
+
+    @property
+    def desc(self) -> str:
+        if self.description is None:
+            return self.__repr__()
+        return self.description
+
 
 class Detector:
     def __init__(
         self,
         acceptor: Callable = create_cone_of_acceptance(ID),
-        desc: Optional[str] = "default",
+        desc: Optional[str] = None,
     ) -> None:
         self.acceptor = acceptor
         self.n_total = 0
         self.n_detected = 0
-        self.desc = desc
+        self.description = desc
 
     def detect(
         self,
@@ -190,6 +201,15 @@ class Detector:
     def reset(self) -> None:
         self.n_total = 0
         self.n_detected = 0
+
+    def __repr__(self) -> str:
+        return f"Detector_object(acceptor=f{self.acceptor})
+
+    @property
+    def desc(self) -> str:
+        if self.description is None:
+            return self.__repr__()
+        return self.description
 
 
 class System:
@@ -1331,10 +1351,10 @@ class Photon:
         ] = None,
     ):
         """
-        This method updates the direciton of the photon members where they are in scattering media, but not at an
+        This method updates the direction of the photon members where they are in scattering media, but not at an
         interface.
 
-        :param theta_phi: Angles to udpte direction with. Optional.
+        :param theta_phi: Angles to update direction with. Optional.
         :type theta_phi: Union[Iterable[float, float], Iterable[Iterable[float, float]]]
         :return: None. Updates photon directions where the photon is in scattering media (but not at an interface)
         """
