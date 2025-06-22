@@ -5,7 +5,7 @@ from typing import Union, Iterable, Tuple, Callable
 import pandas as pd
 
 from ..import_utils import np, NDArray, interp1d
-from ..utils import model_reflectance
+from ..utils import model_reflectance, OpticalPropertyError
 
 # Read data file for function usage
 with importlib.resources.open_text("photon_canon.data", "hbo2_hb.tsv") as f:
@@ -22,6 +22,43 @@ eps = np.log(10) * np.stack((hbo2, dhb)) / 64500
 tHb = 1
 sO2 = 0.5
 
+class ConcentrationError(OpticalPropertyError):
+    """Special error for concentration validation b/c it comes up all the time in Jacobian calculations for fitting"""
+    pass
+
+def validate_concentrations_and_spectra(ci, epsilons, wavelength):
+    # Helper function to check if concentrations are valid (non-negative)
+    def check_concentrations_valid(ci):
+        if isinstance(ci, (list, tuple, np.ndarray)):
+            if np.any(np.array(ci) < 0):
+                raise ConcentrationError("Concentrations cannot be negative")
+        elif isinstance(ci, (int, float)):
+            if ci < 0:
+                raise ConcentrationError("Concentrations cannot be negative")
+
+    # Check if lengths match for list-like concentrations and epsilons
+    def check_lengths_match(ci, epsilons):
+        if isinstance(ci, (list, tuple, np.ndarray)):
+            if len(ci) != len(epsilons):
+                raise OpticalPropertyError(f"Length mismatch: {len(ci)} concentrations vs {len(epsilons)} epsilons")
+        elif isinstance(ci, (int, float)):
+            if isinstance(epsilons[0], (list, tuple, np.ndarray)) and len(epsilons) != 1:
+                raise OpticalPropertyError(f"Expected 1 epsilon, but got {len(epsilons)}")
+
+    # Check if wavelengths and epsilons match up
+    def check_wavelength_epsilon_match(wavelength, epsilons):
+        msg = f"A spectrum of molar absorptivity must be included with each spectrum. You gave {len(wavelength)} wavelengths but molar absorptivity had {len(epsilons[0])} elements."
+        if isinstance(epsilons[0], (list, tuple, np.ndarray)):
+            if not all(len(e) == len(wavelength) for e in epsilons):
+                raise OpticalPropertyError(msg)
+        elif isinstance(epsilons[0], (int, float)) and len(epsilons) != len(wavelength):
+            raise OpticalPropertyError(msg)
+
+        check_lengths_match(ci, epsilons)
+
+        check_wavelength_epsilon_match(wavelength, epsilons)
+
+        check_concentrations_valid(ci)
 
 def calculate_mus(
     a: Real = 1,
@@ -32,42 +69,13 @@ def calculate_mus(
     wavelength0: Real = 650,
     force_feasible: bool = True,
 ) -> Union[Tuple[Real, Real, Real], Tuple[NDArray, NDArray, NDArray]]:
-    # Check cs and epsilons match up
-    msg = (
-        "One alpha must be included for all species, but you gave {} ci and {} spectra. "
-        "In the case of only two species, the second alpha may be omitted"
-    )
+    # Check cs and epsilons match up and are feasible
     try:
-        # Simple 1 to 1 ratio of multiple in list-likes
-        if isinstance(ci, (list, tuple, np.ndarray)):
-            assert len(ci) == len(epsilons), msg.format(len(ci), len(wavelength))
-        # or 1 ci and either a single list-like OR a one element list-like where that element is list-like
-        elif isinstance(ci, (int, float)):
-            if isinstance(epsilons[0], (list, tuple, np.ndarray)):
-                assert len(epsilons) == 1, msg.format(1, len(epsilons))
-
-        # Check cs make sense
+        validate_concentrations_and_spectra(ci, epsilons, wavelength)
+    except ConcentrationError as e:
         if force_feasible:
-            msg = "Concentrations cannot be negative"
-            if isinstance(ci, (list, tuple, np.ndarray)):
-                assert np.all(np.array([c >= 0 for c in ci])), msg
-            elif isinstance(ci, (int, float)):
-                assert ci >= 0, msg
-
-        # Check that wavelengths and epsilons match up
-        msg = (
-            f"A spectrum of molar absorptivity must be included with each spectrum. "
-            f"You gave {len(wavelength)} wavelengths but molar absorptivity had {len(epsilons[0])} elements."
-        )
-        # Either each element of the epsilons has its own element for the wavelengths
-        if isinstance(epsilons[0], (list, tuple, np.ndarray)):
-            assert np.all(np.array([len(e) == len(wavelength) for e in epsilons])), msg
-        # Or there is only one species, and it has its own elements for all wavelengths
-        elif isinstance(epsilons[0], (int, float)):
-            assert len(epsilons) == len(wavelength), msg
-
-    except AssertionError as e:
-        raise ValueError(e)
+            # Stash infeasible results into error
+            raise e(calculate_mus(a, b, ci, epsilons, wavelength, wavelength0, force_feasible=False))
 
     # Array everything as needed
     wavelength = np.asarray(wavelength)  # Wavelengths of measurements (nm)
@@ -153,12 +161,3 @@ def model_from_hemoglobin(
     properties get converted to reflectance using the given model."""
     mu_s, mu_a, _ = hemoglobin_mus(a, b, t, s, wavelengths)
     return model_reflectance(model, mu_s, mu_a, **kwargs)
-
-
-def fit_hemoglobin_model(
-    **kwargs,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    popt, red_chi_sq, _ = fit_model(**kwargs)
-    a, b, t, s = popt
-
-    return a, b, t, s
