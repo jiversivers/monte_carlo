@@ -3,12 +3,20 @@ from numbers import Real
 from typing import Tuple, Union, Callable, Optional, Iterable
 from .import_utils import np, iterable, NDArray
 
-# Hardware specs in cm
+# Importable and default hardware specs
+# ID: Inner diameter in cm
 ID = 0.16443276801785274
+
+# OD: Outer diameter in cm
 OD = 0.3205672319821467
+
+# WD: Working distance in cm
 WD = 0.2
 
+# THETA: Angle of cone based on geometry
 THETA = np.arctan(-OD / WD)  # rad
+
+# NA: Numerical aperture of the optical system
 NA = 1.0
 
 # Create random number generator
@@ -17,6 +25,14 @@ rng = np.random.default_rng()
 
 # Default "sampler" and "detector" to start photons straight down at origin and detect all reflected
 def pencil_beams(n: int) -> Tuple[NDArray[float], NDArray[float]]:
+    """
+    Generates a pencil beam of `n` photons originating from the origin and directed straight downward.
+
+    :param n: Number of photons to simulate.
+    :type n: int
+    :return: Tuple of (locations, directional_cosines) arrays.
+    :rtype: Tuple[NDArray[float], NDArray[float]]
+    """
     return (
         np.repeat(np.array((0, 0, 0))[np.newaxis, ...], n, axis=0),
         np.repeat(np.array((0, 0, 1))[np.newaxis, ...], n, axis=0),
@@ -30,6 +46,22 @@ def hollow_cone_beam(
     angle_min: float = THETA,
     angle_max: float = THETA,
 ) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """
+    Samples photons from a hollow conical beam with specified radial and angular bounds.
+
+    :param n: Number of photons to generate.
+    :type n: int
+    :param r_min: Minimum radius from beam center (cm).
+    :type r_min: float
+    :param r_max: Maximum radius from beam center (cm).
+    :type r_max: float
+    :param angle_min: Minimum injection angle in radians.
+    :type angle_min: float
+    :param angle_max: Maximum injection angle in radians.
+    :type angle_max: float
+    :return: Tuple of photon launch locations and directional cosines.
+    :rtype: Tuple[NDArray[np.float64], NDArray[np.float64]]
+    """
     # Sample angle and radius for starting location
     phi = np.random.uniform(0, 2 * np.pi, n)
     r = np.sqrt(np.random.uniform(r_min**2, r_max**2, n))
@@ -56,6 +88,16 @@ def create_hollow_cone_beam(
     r_bounds: Union[Real, Tuple[Real, Real]],
     angle_bounds: Union[Real, Tuple[Real, Real]],
 ) -> Callable:
+    """
+    Factory function to create a parameterized hollow cone beam sampler.
+
+    :param r_bounds: Either a single max radius or a (min, max) tuple.
+    :type r_bounds: Union[Real, Tuple[Real, Real]]
+    :param angle_bounds: Either a single angle or a (min, max) tuple in radians.
+    :type angle_bounds: Union[Real, Tuple[Real, Real]]
+    :return: A callable beam generator with fixed bounds.
+    :rtype: Callable
+    """
     if not iterable(r_bounds):
         r_max = r_bounds
         r_min = 0
@@ -86,6 +128,20 @@ def create_hollow_cone_beam(
 def oblique_beams(
     n: int, beams: Tuple[int, ...] = (0, 1), gamma: float = 75, w: float = 1
 ):
+    """
+    Generates obliquely incident beams from a tilted source with circular beam profiles.
+
+    :param n: Number of photons to simulate.
+    :type n: int
+    :param beams: Tuple indicating axes used for oblique beam injection (0 for x, 1 for y).
+    :type beams: Tuple[int, ...]
+    :param gamma: Angle in degrees from vertical (z-axis).
+    :type gamma: float
+    :param w: Beam width in cm.
+    :type w: float
+    :return: Tuple of photon launch locations and directional cosines.
+    :rtype: Tuple[NDArray[float], NDArray[float]]
+    """
     c = np.radians(gamma)
 
     # Sample radial positions within a circular beam profile
@@ -119,16 +175,18 @@ def create_oblique_beams(
     beams: Tuple[int, ...] = (0, 1), gamma: float = 75, w: float = 1
 ):
     """
-    Factory functon to create sampler. Just prefills and freezes the set parameters adn returns a callable that will
-    sample n samples with the pre-provided fixed parmeters.
+    Factory function to create an oblique beam sampler.
 
-    NOTE: Using functools.partial makes this pickleable for multiprocessing as opposed to defining the sampler function
-    locally inside this factory.
+    This wraps the `oblique_beams` function with preset parameters for use in multiprocessing contexts.
 
-    :param beams: Tuple of indices for which beams are "on".
+    :param beams: Tuple indicating beam orientation axes.
+    :type beams: Tuple[int, ...]
     :param gamma: Angle in degrees from the z-axis.
-    :param w: Width of the beam.
-    :return: Frozen sampler function with the parameters set here.
+    :type gamma: float
+    :param w: Width of the beam (cm).
+    :type w: float
+    :return: Callable beam generator with frozen parameters.
+    :rtype: Callable
     """
     return functools.partial(oblique_beams, beams=beams, gamma=gamma, w=w)
 
@@ -137,6 +195,18 @@ def create_oblique_beams(
 def total_acceptor(
     x: float, y: float, mu_z: Optional[float] = None
 ) -> NDArray[np.bool_]:
+    """
+    Detector function that accepts all reflected photons unconditionally.
+
+    :param x: x-position(s) of the photon.
+    :type x: float
+    :param y: y-position(s) of the photon.
+    :type y: float
+    :param mu_z: Optional z-direction cosine(s); ignored.
+    :type mu_z: Optional[float]
+    :return: Boolean mask indicating all photons are accepted.
+    :rtype: NDArray[np.bool_]
+    """
     return np.full_like(x, fill_value=True, dtype=np.bool_)
 
 
@@ -148,6 +218,26 @@ def cone_of_acceptance(
     n: float = 1.33,
     r: float = ID,
 ) -> NDArray[np.bool_]:
+    """
+    Detector function that accepts photons based on angle and radial distance.
+
+    Accepts photons within a specified numerical aperture and radial extent.
+
+    :param x: x-coordinate(s) of the photon.
+    :type x: Union[Real, Iterable[Real]]
+    :param y: y-coordinate(s) of the photon.
+    :type y: Union[Real, Iterable[Real]]
+    :param mu_z: z-direction cosine(s) for angular filtering.
+    :type mu_z: Union[Real, Iterable[Real]]
+    :param na: Numerical aperture.
+    :type na: float
+    :param n: Refractive index of the medium.
+    :type n: float
+    :param r: Maximum radial acceptance.
+    :type r: float
+    :return: Boolean mask indicating which photons are accepted.
+    :rtype: NDArray[np.bool_]
+    """
     x = np.array(x)
     y = np.array(y)
     if mu_z is not None:
@@ -161,5 +251,21 @@ def cone_of_acceptance(
     return ~too_steep & ~outside
 
 
-def create_cone_of_acceptance(r: Real, na: Real = NA, n: Real = 1.33) -> Callable:
+def create_cone_of_acceptance(
+        r: Real,
+        na: Real = NA,
+        n: Real = 1.33
+) -> Callable[[Union[Real, Iterable[Real]], Union[Real, Iterable[Real]], ...], NDArray[np.bool_]]:
+    """
+    Factory function to create a cone-of-acceptance detector function.
+
+    :param r: Radial acceptance limit.
+    :type r: Real
+    :param na: Numerical aperture.
+    :type na: Real
+    :param n: Refractive index.
+    :type n: Real
+    :return: Callable detector function.
+    :rtype: Callable
+    """
     return functools.partial(cone_of_acceptance, r=r, na=na, n=n)
