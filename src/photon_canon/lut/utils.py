@@ -2,11 +2,12 @@ import sqlite3
 from enum import Enum
 from numbers import Real
 from pathlib import Path
-from typing import Union, Iterable
+from typing import Union, Iterable, Type, Optional
 
 from ..import_utils import np
 
 from .. import System
+from ..utils import latest_simulation_id
 
 # Set up simulation database
 db_dir = Path.home() / ".photon_canon"
@@ -14,6 +15,10 @@ db_dir.mkdir(parents=True, exist_ok=True)
 db_path = db_dir / "lut.db"
 con = sqlite3.connect(db_path)
 c = con.cursor()
+
+
+class LUTError(Exception):
+    pass
 
 
 class Dimensions(str, Enum):
@@ -171,3 +176,31 @@ def add_simulation_result(
     )
 
     con.commit()
+
+def _get_sim_id(
+        obj: Optional["LUT"],
+        simulation_id: int | None,
+        set_default: bool = True) -> int | None:
+    """
+    Helper function to parse the class/instance method inputs to get the simulation ID.
+
+    :param obj: LUT instance to get the simulation ID from or None when coming form a class method call.
+    :type obj: LUT | None
+    :param simulation_id: Simulation ID to set/check or None if not input.
+    :type simulation_id: int | None
+    :param set_default: Whether the simulation ID is set to a default value or not.
+    :type set_default: bool
+    :return: A simulation ID or None if not set_default.
+    :rtype: int | None
+    """
+    if obj is not None:
+        if simulation_id is not None and simulation_id != obj.simulation_id:
+            raise LUTError(f"Input simulation_id ({simulation_id})does not match simulation_id of instance ({obj.simulation_id}). "
+                           "Consider calling as class method with simulation_id argument instead.")
+        return simulation_id or obj.simulation_id
+
+    elif simulation_id is None and set_default:
+        return latest_simulation_id
+
+    else:
+        return simulation_id
