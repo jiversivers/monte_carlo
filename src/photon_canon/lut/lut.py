@@ -2,11 +2,12 @@ import itertools
 import logging
 import multiprocessing as mp
 from numbers import Real
-from typing import Optional, List, Union, Tuple
+from typing import Optional, List, Union, Tuple, Type
 
-from pydantic import PrivateAttr, BaseModel, ConfigDict
+from pydantic import PrivateAttr, BaseModel
 from tqdm import tqdm
 
+from .utils import LUTError, _get_sim_id
 from ..import_utils import np, NDArray, RegularGridInterpolator
 import pandas as pd
 
@@ -24,7 +25,6 @@ from ..lut.utils import (
 from ..utils import latest_simulation_id, CON
 
 c = CON.cursor()
-
 
 def single_sim(
     args: Tuple[
@@ -153,7 +153,7 @@ class LUT(BaseModel):
         if not isinstance(values, tuple):
             values = (values,)
         if not len(values) <= len(self.dimensions):
-            raise IndexError(
+            raise LUTError(
                 f"LUT supports only up to {len(self.dimensions)}D. {self.dimensions}"
             )
 
@@ -163,7 +163,7 @@ class LUT(BaseModel):
         # Ensure all input arrays have the same shape for element-wise pairing
         input_shapes = [p.shape for p in pts]
         if len(set(input_shapes)) > 1:
-            raise ValueError(
+            raise LUTError(
                 f"Input arrays must have the same shape for element-wise pairing, got {input_shapes}"
             )
 
@@ -220,15 +220,14 @@ class LUT(BaseModel):
         return self._interpolator
 
     @classOrInstanceMethod
-    def to_pandas(self, cls, simulation_id=None) -> pd.DataFrame:
-        if simulation_id is None:
-            simulation_id = latest_simulation_id
+    def to_pandas(self: Optional["LUT"], cls: Type["LUT"], simulation_id: Optional[int] = None) -> pd.DataFrame:
+        simulation_id = _get_sim_id(self, simulation_id)
         query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
         return df
 
     @classOrInstanceMethod
-    def list_available(self, cls, portion: str = "ALL") -> List[int]:
+    def list_available(self: Optional["LUT"], cls: Type["LUT"], portion: str = "ALL") -> List[int]:
         c.execute(
             """
         SELECT DISTINCT id FROM mclut_simulations
@@ -248,26 +247,21 @@ class LUT(BaseModel):
         return available[portion]
 
     @classOrInstanceMethod
-    def get_layer_data(self, cls, simulation_id: Optional[int] = None) -> pd.DataFrame:
-        if simulation_id is None:
-            if hasattr(cls, "simulation_id"):
-                simulation_id = cls.simulation_id
-            else:
-                simulation_id = latest_simulation_id
+    def get_layer_data(self: Optional["LUT"], cls: Type["LUT"], simulation_id: Optional[int] = None) -> pd.DataFrame:
+        simulation_id = _get_sim_id(self, simulation_id)
         query = f"SELECT * FROM fixed_layers WHERE simulation_id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
         return df
 
     @classOrInstanceMethod
     def get_metadata(
-        self, cls, simulation_id: Optional[int] = None, portion: str = "ALL"
+        self: Optional["LUT"], cls: Type["LUT"], simulation_id: Optional[int] = None, portion: str = "ALL"
     ) -> pd.DataFrame:
         query = f"SELECT * FROM mclut_simulations"
         portion = ListPortion[portion.upper()].value
-        if simulation_id is None:
-            if hasattr(cls, "simulation_id"):
-                simulation_id = cls.simulation_id
-                query += f" WHERE id = {simulation_id}"
+        simulation_id = _get_sim_id(self, simulation_id, set_default=False)
+        if simulation_id is not None:
+            query += f" WHERE id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
         return df[portion]
 
