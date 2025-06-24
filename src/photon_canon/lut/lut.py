@@ -230,7 +230,7 @@ class LUT(BaseModel):
         query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
         if self.smoothing_fn is not None:
-            df["output"] = self.smoothing_fn(df["output"])
+            df["output"] = self.smoothing_fn(df["output"].values)
         return df
 
     @classOrInstanceMethod
