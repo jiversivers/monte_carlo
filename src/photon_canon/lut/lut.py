@@ -2,9 +2,9 @@ import itertools
 import logging
 import multiprocessing as mp
 from numbers import Real
-from typing import Optional, List, Union, Tuple, Type
+from typing import Optional, List, Union, Tuple, Type, Any, Callable
 
-from pydantic import PrivateAttr, BaseModel
+from pydantic import PrivateAttr, BaseModel, model_validator
 from tqdm import tqdm
 
 from .utils import LUTError, _get_sim_id
@@ -139,6 +139,7 @@ class LUT(BaseModel):
     dimensions: List[Dimensions] = [Dimensions.MU_S, Dimensions.MU_A, Dimensions.G]
     extrapolate: bool = False
     scale: float = 1
+    smoothing_fn: Optional[Callable[[NDArray], NDArray]] = None
 
     _interpolator: Optional[RegularGridInterpolator] = PrivateAttr(default=None)
 
@@ -208,6 +209,10 @@ class LUT(BaseModel):
             points = tuple(np.unique(val) for val in values)
             output = np.asarray(output).reshape(*[len(p) for p in points])
 
+            # Apply smoothing
+            if self.smoothing_fn is not None:
+                output = self.smoothing_fn(output)
+
             # Interpolation/Extrapolate (if True)
             self._interpolator = RegularGridInterpolator(
                 points,
@@ -224,6 +229,8 @@ class LUT(BaseModel):
         simulation_id = _get_sim_id(self, simulation_id)
         query = f"SELECT mu_s, mu_a, g, output FROM mclut WHERE simulation_id = {simulation_id}"
         df = pd.read_sql_query(query, CON)
+        if self.smoothing_fn is not None:
+            df["output"] = self.smoothing_fn(df["output"])
         return df
 
     @classOrInstanceMethod
