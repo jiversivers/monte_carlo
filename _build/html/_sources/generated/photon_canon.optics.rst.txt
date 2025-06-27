@@ -1,0 +1,17 @@
+photon\_canon.optics
+====================
+
+.. automodule:: photon_canon.optics
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Detector
+      Illumination
+      IndexableProperty
+      Medium
+      Photon
+      System
+   

@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photon_canon.hardware &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="photon_canon.import_utils" href="photon_canon.import_utils.html" />
+    <link rel="prev" title="photon_canon.contrib.food_coloring" href="photon_canon.contrib.food_coloring.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.hardware</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.cone_of_acceptance"><code class="docutils literal notranslate"><span class="pre">cone_of_acceptance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_cone_of_acceptance"><code class="docutils literal notranslate"><span class="pre">create_cone_of_acceptance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_hollow_cone_beam"><code class="docutils literal notranslate"><span class="pre">create_hollow_cone_beam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_oblique_beams"><code class="docutils literal notranslate"><span class="pre">create_oblique_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.hollow_cone_beam"><code class="docutils literal notranslate"><span class="pre">hollow_cone_beam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.oblique_beams"><code class="docutils literal notranslate"><span class="pre">oblique_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.pencil_beams"><code class="docutils literal notranslate"><span class="pre">pencil_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.total_acceptor"><code class="docutils literal notranslate"><span class="pre">total_acceptor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Photon Canon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.hardware</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.cone_of_acceptance"><code class="docutils literal notranslate"><span class="pre">cone_of_acceptance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_cone_of_acceptance"><code class="docutils literal notranslate"><span class="pre">create_cone_of_acceptance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_hollow_cone_beam"><code class="docutils literal notranslate"><span class="pre">create_hollow_cone_beam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.create_oblique_beams"><code class="docutils literal notranslate"><span class="pre">create_oblique_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.hollow_cone_beam"><code class="docutils literal notranslate"><span class="pre">hollow_cone_beam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.oblique_beams"><code class="docutils literal notranslate"><span class="pre">oblique_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.pencil_beams"><code class="docutils literal notranslate"><span class="pre">pencil_beams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.hardware.total_acceptor"><code class="docutils literal notranslate"><span class="pre">total_acceptor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.html">photon_canon</a></li>
+      <li class="breadcrumb-item active">photon_canon.hardware</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/photon_canon.hardware.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-photon_canon.hardware">
+<span id="photon-canon-hardware"></span><h1>photon_canon.hardware<a class="headerlink" href="#module-photon_canon.hardware" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.hardware.cone_of_acceptance" title="photon_canon.hardware.cone_of_acceptance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cone_of_acceptance</span></code></a>(x, y[, mu_z, na, n, r])</p></td>
+<td><p>Detector function that accepts photons based on angle and radial distance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.hardware.create_cone_of_acceptance" title="photon_canon.hardware.create_cone_of_acceptance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_cone_of_acceptance</span></code></a>(r[, na, n])</p></td>
+<td><p>Factory function to create a cone-of-acceptance detector function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.hardware.create_hollow_cone_beam" title="photon_canon.hardware.create_hollow_cone_beam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_hollow_cone_beam</span></code></a>(r_bounds, angle_bounds)</p></td>
+<td><p>Factory function to create a parameterized hollow cone beam sampler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.hardware.create_oblique_beams" title="photon_canon.hardware.create_oblique_beams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_oblique_beams</span></code></a>([beams, gamma, w])</p></td>
+<td><p>Factory function to create an oblique beam sampler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.hardware.hollow_cone_beam" title="photon_canon.hardware.hollow_cone_beam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hollow_cone_beam</span></code></a>([n, r_min, r_max, ...])</p></td>
+<td><p>Samples photons from a hollow conical beam with specified radial and angular bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.hardware.oblique_beams" title="photon_canon.hardware.oblique_beams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">oblique_beams</span></code></a>(n[, beams, gamma, w])</p></td>
+<td><p>Generates obliquely incident beams from a tilted source with circular beam profiles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.hardware.pencil_beams" title="photon_canon.hardware.pencil_beams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pencil_beams</span></code></a>(n)</p></td>
+<td><p>Generates a pencil beam of <cite>n</cite> photons originating from the origin and directed straight downward.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.hardware.total_acceptor" title="photon_canon.hardware.total_acceptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">total_acceptor</span></code></a>(x, y[, mu_z])</p></td>
+<td><p>Detector function that accepts all reflected photons unconditionally.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.cone_of_acceptance">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">cone_of_acceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">na</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.33</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.16443276801785273</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.cone_of_acceptance" title="Link to this definition"></a></dt>
+<dd><p>Detector function that accepts photons based on angle and radial distance.</p>
+<p>Accepts photons within a specified numerical aperture and radial extent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Union</em><em>[</em><em>Real</em><em>, </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em><em>]</em>) – x-coordinate(s) of the photon.</p></li>
+<li><p><strong>y</strong> (<em>Union</em><em>[</em><em>Real</em><em>, </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em><em>]</em>) – y-coordinate(s) of the photon.</p></li>
+<li><p><strong>mu_z</strong> (<em>Union</em><em>[</em><em>Real</em><em>, </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em><em>]</em>) – z-direction cosine(s) for angular filtering.</p></li>
+<li><p><strong>na</strong> (<em>float</em>) – Numerical aperture.</p></li>
+<li><p><strong>n</strong> (<em>float</em>) – Refractive index of the medium.</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Maximum radial acceptance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean mask indicating which photons are accepted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDArray[bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.create_cone_of_acceptance">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">create_cone_of_acceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">na</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.33</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.create_cone_of_acceptance" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create a cone-of-acceptance detector function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>Real</em>) – Radial acceptance limit.</p></li>
+<li><p><strong>na</strong> (<em>Real</em>) – Numerical aperture.</p></li>
+<li><p><strong>n</strong> (<em>Real</em>) – Refractive index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable detector function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.create_hollow_cone_beam">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">create_hollow_cone_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.create_hollow_cone_beam" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create a parameterized hollow cone beam sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r_bounds</strong> (<em>Union</em><em>[</em><em>Real</em><em>, </em><em>Tuple</em><em>[</em><em>Real</em><em>, </em><em>Real</em><em>]</em><em>]</em>) – Either a single max radius or a (min, max) tuple.</p></li>
+<li><p><strong>angle_bounds</strong> (<em>Union</em><em>[</em><em>Real</em><em>, </em><em>Tuple</em><em>[</em><em>Real</em><em>, </em><em>Real</em><em>]</em><em>]</em>) – Either a single angle or a (min, max) tuple in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A callable beam generator with fixed bounds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.create_oblique_beams">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">create_oblique_beams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.create_oblique_beams" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create an oblique beam sampler.</p>
+<p>This wraps the <cite>oblique_beams</cite> function with preset parameters for use in multiprocessing contexts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beams</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – Tuple indicating beam orientation axes.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – Angle in degrees from the z-axis.</p></li>
+<li><p><strong>w</strong> (<em>float</em>) – Width of the beam (cm).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable beam generator with frozen parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.hollow_cone_beam">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">hollow_cone_beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.16443276801785273</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3205672319821467</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float64(-1.0129926712049746)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float64(-1.0129926712049746)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.hollow_cone_beam" title="Link to this definition"></a></dt>
+<dd><p>Samples photons from a hollow conical beam with specified radial and angular bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of photons to generate.</p></li>
+<li><p><strong>r_min</strong> (<em>float</em>) – Minimum radius from beam center (cm).</p></li>
+<li><p><strong>r_max</strong> (<em>float</em>) – Maximum radius from beam center (cm).</p></li>
+<li><p><strong>angle_min</strong> (<em>float</em>) – Minimum injection angle in radians.</p></li>
+<li><p><strong>angle_max</strong> (<em>float</em>) – Maximum injection angle in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of photon launch locations and directional cosines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[NDArray[np.float64], NDArray[np.float64]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.oblique_beams">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">oblique_beams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.oblique_beams" title="Link to this definition"></a></dt>
+<dd><p>Generates obliquely incident beams from a tilted source with circular beam profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of photons to simulate.</p></li>
+<li><p><strong>beams</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – Tuple indicating axes used for oblique beam injection (0 for x, 1 for y).</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – Angle in degrees from vertical (z-axis).</p></li>
+<li><p><strong>w</strong> (<em>float</em>) – Beam width in cm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of photon launch locations and directional cosines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[NDArray[float], NDArray[float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.pencil_beams">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">pencil_beams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.pencil_beams" title="Link to this definition"></a></dt>
+<dd><p>Generates a pencil beam of <cite>n</cite> photons originating from the origin and directed straight downward.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Number of photons to simulate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of (locations, directional_cosines) arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[NDArray[float], NDArray[float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.hardware.total_acceptor">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.hardware.</span></span><span class="sig-name descname"><span class="pre">total_acceptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.hardware.total_acceptor" title="Link to this definition"></a></dt>
+<dd><p>Detector function that accepts all reflected photons unconditionally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – x-position(s) of the photon.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – y-position(s) of the photon.</p></li>
+<li><p><strong>mu_z</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Optional z-direction cosine(s); ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean mask indicating all photons are accepted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDArray[bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="photon_canon.contrib.food_coloring.html" class="btn btn-neutral float-left" title="photon_canon.contrib.food_coloring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="photon_canon.import_utils.html" class="btn btn-neutral float-right" title="photon_canon.import_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

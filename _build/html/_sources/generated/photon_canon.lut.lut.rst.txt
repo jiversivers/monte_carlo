@@ -1,0 +1,18 @@
+photon\_canon.lut.lut
+=====================
+
+.. automodule:: photon_canon.lut.lut
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      generate_lut
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      LUT
+   

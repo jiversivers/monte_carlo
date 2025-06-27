@@ -1,0 +1,1206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photon_canon.optics &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="photon_canon.utils" href="photon_canon.utils.html" />
+    <link rel="prev" title="photon_canon.lut.utils" href="photon_canon.lut.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.optics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.desc"><code class="docutils literal notranslate"><span class="pre">Detector.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.detect"><code class="docutils literal notranslate"><span class="pre">Detector.detect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.reset"><code class="docutils literal notranslate"><span class="pre">Detector.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Illumination"><code class="docutils literal notranslate"><span class="pre">Illumination</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Illumination.desc"><code class="docutils literal notranslate"><span class="pre">Illumination.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Illumination.photon"><code class="docutils literal notranslate"><span class="pre">Illumination.photon()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.IndexableProperty"><code class="docutils literal notranslate"><span class="pre">IndexableProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.IndexableProperty.normalize"><code class="docutils literal notranslate"><span class="pre">IndexableProperty.normalize</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Medium"><code class="docutils literal notranslate"><span class="pre">Medium</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.Config"><code class="docutils literal notranslate"><span class="pre">Medium.Config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.albedo"><code class="docutils literal notranslate"><span class="pre">Medium.albedo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.albedo_at"><code class="docutils literal notranslate"><span class="pre">Medium.albedo_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.convert_to_array"><code class="docutils literal notranslate"><span class="pre">Medium.convert_to_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.desc"><code class="docutils literal notranslate"><span class="pre">Medium.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.display_color"><code class="docutils literal notranslate"><span class="pre">Medium.display_color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.force_non_scatterers_g"><code class="docutils literal notranslate"><span class="pre">Medium.force_non_scatterers_g()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.g"><code class="docutils literal notranslate"><span class="pre">Medium.g</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.g_vals"><code class="docutils literal notranslate"><span class="pre">Medium.g_vals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.model_config"><code class="docutils literal notranslate"><span class="pre">Medium.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_a"><code class="docutils literal notranslate"><span class="pre">Medium.mu_a</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_a_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_a_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_s"><code class="docutils literal notranslate"><span class="pre">Medium.mu_s</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_s_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_s_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_t"><code class="docutils literal notranslate"><span class="pre">Medium.mu_t</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_t_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_t_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.n"><code class="docutils literal notranslate"><span class="pre">Medium.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.ref_wavelength"><code class="docutils literal notranslate"><span class="pre">Medium.ref_wavelength</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.set"><code class="docutils literal notranslate"><span class="pre">Medium.set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.wavelengths"><code class="docutils literal notranslate"><span class="pre">Medium.wavelengths</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Photon"><code class="docutils literal notranslate"><span class="pre">Photon</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.absorb"><code class="docutils literal notranslate"><span class="pre">Photon.absorb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.copy"><code class="docutils literal notranslate"><span class="pre">Photon.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.directional_cosines"><code class="docutils literal notranslate"><span class="pre">Photon.directional_cosines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.headed_into"><code class="docutils literal notranslate"><span class="pre">Photon.headed_into()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.is_terminated"><code class="docutils literal notranslate"><span class="pre">Photon.is_terminated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.location_coordinates"><code class="docutils literal notranslate"><span class="pre">Photon.location_coordinates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.medium"><code class="docutils literal notranslate"><span class="pre">Photon.medium</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.move"><code class="docutils literal notranslate"><span class="pre">Photon.move()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.plot_path"><code class="docutils literal notranslate"><span class="pre">Photon.plot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.reflect_refract"><code class="docutils literal notranslate"><span class="pre">Photon.reflect_refract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.russian_roulette"><code class="docutils literal notranslate"><span class="pre">Photon.russian_roulette()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.scatter"><code class="docutils literal notranslate"><span class="pre">Photon.scatter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.simulate"><code class="docutils literal notranslate"><span class="pre">Photon.simulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.weights"><code class="docutils literal notranslate"><span class="pre">Photon.weights</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.System"><code class="docutils literal notranslate"><span class="pre">System</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.add"><code class="docutils literal notranslate"><span class="pre">System.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.beam"><code class="docutils literal notranslate"><span class="pre">System.beam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.boundaries"><code class="docutils literal notranslate"><span class="pre">System.boundaries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.in_medium"><code class="docutils literal notranslate"><span class="pre">System.in_medium()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.interface_crossed"><code class="docutils literal notranslate"><span class="pre">System.interface_crossed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.represent_on_axis"><code class="docutils literal notranslate"><span class="pre">System.represent_on_axis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.stack"><code class="docutils literal notranslate"><span class="pre">System.stack</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Photon Canon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.optics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.desc"><code class="docutils literal notranslate"><span class="pre">Detector.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.detect"><code class="docutils literal notranslate"><span class="pre">Detector.detect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Detector.reset"><code class="docutils literal notranslate"><span class="pre">Detector.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Illumination"><code class="docutils literal notranslate"><span class="pre">Illumination</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Illumination.desc"><code class="docutils literal notranslate"><span class="pre">Illumination.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Illumination.photon"><code class="docutils literal notranslate"><span class="pre">Illumination.photon()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.IndexableProperty"><code class="docutils literal notranslate"><span class="pre">IndexableProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.IndexableProperty.normalize"><code class="docutils literal notranslate"><span class="pre">IndexableProperty.normalize</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Medium"><code class="docutils literal notranslate"><span class="pre">Medium</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.Config"><code class="docutils literal notranslate"><span class="pre">Medium.Config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.albedo"><code class="docutils literal notranslate"><span class="pre">Medium.albedo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.albedo_at"><code class="docutils literal notranslate"><span class="pre">Medium.albedo_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.convert_to_array"><code class="docutils literal notranslate"><span class="pre">Medium.convert_to_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.desc"><code class="docutils literal notranslate"><span class="pre">Medium.desc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.display_color"><code class="docutils literal notranslate"><span class="pre">Medium.display_color</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.force_non_scatterers_g"><code class="docutils literal notranslate"><span class="pre">Medium.force_non_scatterers_g()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.g"><code class="docutils literal notranslate"><span class="pre">Medium.g</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.g_vals"><code class="docutils literal notranslate"><span class="pre">Medium.g_vals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.model_config"><code class="docutils literal notranslate"><span class="pre">Medium.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_a"><code class="docutils literal notranslate"><span class="pre">Medium.mu_a</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_a_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_a_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_s"><code class="docutils literal notranslate"><span class="pre">Medium.mu_s</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_s_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_s_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_t"><code class="docutils literal notranslate"><span class="pre">Medium.mu_t</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.mu_t_at"><code class="docutils literal notranslate"><span class="pre">Medium.mu_t_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.n"><code class="docutils literal notranslate"><span class="pre">Medium.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.ref_wavelength"><code class="docutils literal notranslate"><span class="pre">Medium.ref_wavelength</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.set"><code class="docutils literal notranslate"><span class="pre">Medium.set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Medium.wavelengths"><code class="docutils literal notranslate"><span class="pre">Medium.wavelengths</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.Photon"><code class="docutils literal notranslate"><span class="pre">Photon</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.absorb"><code class="docutils literal notranslate"><span class="pre">Photon.absorb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.copy"><code class="docutils literal notranslate"><span class="pre">Photon.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.directional_cosines"><code class="docutils literal notranslate"><span class="pre">Photon.directional_cosines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.headed_into"><code class="docutils literal notranslate"><span class="pre">Photon.headed_into()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.is_terminated"><code class="docutils literal notranslate"><span class="pre">Photon.is_terminated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.location_coordinates"><code class="docutils literal notranslate"><span class="pre">Photon.location_coordinates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.medium"><code class="docutils literal notranslate"><span class="pre">Photon.medium</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.move"><code class="docutils literal notranslate"><span class="pre">Photon.move()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.plot_path"><code class="docutils literal notranslate"><span class="pre">Photon.plot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.reflect_refract"><code class="docutils literal notranslate"><span class="pre">Photon.reflect_refract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.russian_roulette"><code class="docutils literal notranslate"><span class="pre">Photon.russian_roulette()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.scatter"><code class="docutils literal notranslate"><span class="pre">Photon.scatter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.simulate"><code class="docutils literal notranslate"><span class="pre">Photon.simulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.Photon.weights"><code class="docutils literal notranslate"><span class="pre">Photon.weights</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.optics.System"><code class="docutils literal notranslate"><span class="pre">System</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.add"><code class="docutils literal notranslate"><span class="pre">System.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.beam"><code class="docutils literal notranslate"><span class="pre">System.beam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.boundaries"><code class="docutils literal notranslate"><span class="pre">System.boundaries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.in_medium"><code class="docutils literal notranslate"><span class="pre">System.in_medium()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.interface_crossed"><code class="docutils literal notranslate"><span class="pre">System.interface_crossed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.represent_on_axis"><code class="docutils literal notranslate"><span class="pre">System.represent_on_axis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.optics.System.stack"><code class="docutils literal notranslate"><span class="pre">System.stack</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.html">photon_canon</a></li>
+      <li class="breadcrumb-item active">photon_canon.optics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/photon_canon.optics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-photon_canon.optics">
+<span id="photon-canon-optics"></span><h1>photon_canon.optics<a class="headerlink" href="#module-photon_canon.optics" title="Link to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.optics.Detector" title="photon_canon.optics.Detector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Detector</span></code></a>([acceptor, desc])</p></td>
+<td><p>Simple tally detector that counts photons accepted by a user-supplied <strong>acceptance function</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.optics.Illumination" title="photon_canon.optics.Illumination"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Illumination</span></code></a>([pattern, angle_max, spectrum, ...])</p></td>
+<td><p>Source model that <em>samples</em> photons from an angular/positional <strong>pattern</strong> and an optional <strong>emission spectrum</strong>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IndexableProperty</span></code></a>(arr[, normalize, dtype])</p></td>
+<td><p>NumPy <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> subclass that <strong>renormalises itself</strong> whenever its values change.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Medium</span></code></a>(**data)</p></td>
+<td><p>Container for the <em>optical properties</em> of a homogeneous layer (<span class="math notranslate nohighlight">\(n, \mu_s, \mu_a, g\)</span>) optionally specified as functions of wavelength.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.optics.Photon" title="photon_canon.optics.Photon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Photon</span></code></a>(wavelength[, batch_size, system, ...])</p></td>
+<td><p>Simulated photon (or <strong>batch</strong> of photons) for Monte-Carlo light-transport modelling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.optics.System" title="photon_canon.optics.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code></a>(*args[, surrounding_n, illuminator, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.Detector">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acceptor=functools.partial(&lt;function</span> <span class="pre">cone_of_acceptance&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r=0.16443276801785273</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">na=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n=1.33)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Detector" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simple tally detector that counts photons accepted by a user-supplied
+<strong>acceptance function</strong>.</p>
+<p>The detector maintains two running counters:</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">n_total</span></code>    – total weight of photons presented.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">n_detected</span></code> – weight of photons whose exit positions and
+directions satisfy the acceptance criterion.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acceptor</strong> (<em>Callable</em><em>[</em><em>[</em><em>numpy.ndarray</em><em>, </em><em>numpy.ndarray</em><em>]</em><em>, </em><em>numpy.ndarray</em><em>]</em>) – <p>Callable that decides if a photon hits the detector.
+It is called as <code class="docutils literal notranslate"><span class="pre">acceptor(x,</span> <span class="pre">y,</span> <span class="pre">mu_z=mu_z)</span></code> where</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y</span></code> – exit coordinates of each photon (mm),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu_z</span></code>  – := <code class="docutils literal notranslate"><span class="pre">cos(θ_exit)</span></code> (z-component of direction).</p></li>
+</ul>
+<p>Must return a Boolean array of the same length.
+The default is an aperture defined by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">create_cone_of_acceptance()</span></code>.</p>
+</p></li>
+<li><p><strong>desc</strong> (<em>str</em><em> | </em><em>None</em>) – Optional description string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>n_total</strong> – Cumulative <em>weight</em> of all photons processed.</p></li>
+<li><p><strong>n_detected</strong> – Cumulative <em>weight</em> of photons accepted.</p></li>
+<li><p><strong>acceptor</strong> – Acceptance function provided at construction.</p></li>
+<li><p><strong>description</strong> – Raw description string.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="xref py py-func docutils literal notranslate"><span class="pre">__call__()</span></code> is invoked with an object
+that is not a <a class="reference internal" href="#photon_canon.optics.Photon" title="photon_canon.optics.Photon"><code class="xref py py-class docutils literal notranslate"><span class="pre">Photon</span></code></a>.</p>
+</dd>
+</dl>
+<p class="rubric">Usage example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">det</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot;f/2.4 collection cone&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">det</span><span class="p">(</span><span class="n">photon_packet</span><span class="p">)</span>          <span class="c1"># tally all photons in the packet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">det</span><span class="o">.</span><span class="n">n_detected</span> <span class="o">/</span> <span class="n">det</span><span class="o">.</span><span class="n">n_total</span>   <span class="c1"># detection efficiency</span>
+<span class="go">0.031</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Detector.desc">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#photon_canon.optics.Detector.desc" title="Link to this definition"></a></dt>
+<dd><p>A convenience description string for easier logging of simulations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Detector.detect">
+<span class="sig-name descname"><span class="pre">detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Detector.detect" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Determine if a photon is detected according to the detector function. Adds the weighted photon to the count</dt><dd><p>if detected.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Location of photon to detect.</p></li>
+<li><p><strong>direction</strong> (<em>float</em><em> | </em><em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Direction of photon to detect.</p></li>
+<li><p><strong>weights</strong> (<em>float</em><em> | </em><em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Weights of photons to detect.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Detector.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Detector.reset" title="Link to this definition"></a></dt>
+<dd><p>Set detector counts back to 0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.Illumination">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">Illumination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern=functools.partial(&lt;function</span> <span class="pre">hollow_cone_beam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_min=0.16443276801785273</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_max=0.3205672319821467</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_min=np.float64(-1.0129926712049746)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_max=np.float64(-1.0129926712049746))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Illumination" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Source model that <em>samples</em> photons from an angular/positional
+<strong>pattern</strong> and an optional <strong>emission spectrum</strong>.</p>
+<p>The class is lightweight: it simply stores callables that know
+how to generate photon starting conditions and delegates the heavy
+lifting to <a class="reference internal" href="#photon_canon.optics.Photon" title="photon_canon.optics.Photon"><code class="xref py py-class docutils literal notranslate"><span class="pre">photon_canon.optics.Photon</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> (<em>Callable</em><em>[</em><em>[</em><em>int</em><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>numpy.ndarray</em><em>, </em><em>numpy.ndarray</em><em>]</em><em>]</em>) – <p>A callable <code class="docutils literal notranslate"><span class="pre">pattern(batch_size)</span> <span class="pre">→</span> <span class="pre">(loc,</span> <span class="pre">dir)</span></code> that
+returns</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">loc</span></code> – Cartesian positions <em>(N × 3)</em> in millimetres.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dir</span></code> – Directional cosines <em>(N × 3)</em>.</p></li>
+</ul>
+<p>If omitted, the default is a hollow-cone beam created by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">create_hollow_cone_beam()</span></code>.</p>
+</p></li>
+<li><p><strong>spectrum</strong> (<em>Iterable</em><em>[</em><em>float</em><em>] </em><em>| </em><em>None</em>) – Iterable of <em>relative</em> intensities sampled at the
+global wavelength grid <code class="docutils literal notranslate"><span class="pre">wl</span></code>.  If <em>None</em>, photons are
+initialised without a wavelength (i.e. monochromatic).</p></li>
+<li><p><strong>desc</strong> (<em>str</em><em> | </em><em>None</em>) – Human-readable description used by <a class="reference internal" href="#photon_canon.optics.Illumination.desc" title="photon_canon.optics.Illumination.desc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">desc</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>pattern</strong> – The sampling function supplied at construction time.</p></li>
+<li><p><strong>spectrum</strong> – The normalised emission spectrum (or <em>None</em>).</p></li>
+<li><p><strong>description</strong> – Raw description string.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">illum</span> <span class="o">=</span> <span class="n">Illumination</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">pattern</span><span class="o">=</span><span class="n">create_hollow_cone_beam</span><span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span> <span class="mi">35</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">spectrum</span><span class="o">=</span><span class="n">my_led_spectrum</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;LED hollow cone&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">photon_packet</span> <span class="o">=</span> <span class="n">illum</span><span class="o">.</span><span class="n">photon</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">1_000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">photon_packet</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">photon_packet</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">((1000, 3), (1000, 3))</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Illumination.desc">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#photon_canon.optics.Illumination.desc" title="Link to this definition"></a></dt>
+<dd><p>A convenience description string for easier logging of simulations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Illumination.photon">
+<span class="sig-name descname"><span class="pre">photon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Illumination.photon" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#photon_canon.optics.Photon" title="photon_canon.optics.Photon"><code class="xref py py-class docutils literal notranslate"><span class="pre">Photon</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.IndexableProperty">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">IndexableProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.IndexableProperty" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+<p>NumPy <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> subclass that <strong>renormalises itself</strong> whenever its
+values change.</p>
+<p>The object behaves like a normal array but keeps an internal flag
+(<a class="reference internal" href="#photon_canon.optics.IndexableProperty.normalize" title="photon_canon.optics.IndexableProperty.normalize"><code class="xref py py-attr docutils literal notranslate"><span class="pre">normalize</span></code></a>) that, when <em>True</em>, forces the vector(s) to be
+scaled to unit length after every assignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>Iterable</em>) – Initial data used to construct the array.</p></li>
+<li><p><strong>normalize</strong> (bool, default <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <em>True</em>, the array is normalised to unit length
+on creation <strong>and</strong> after every in-place update.</p></li>
+<li><p><strong>dtype</strong> (<em>numpy.dtype</em><em> | </em><em>None</em>) – NumPy data type to cast <em>arr</em> to.  If <em>None</em>, the dtype
+is inferred by <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.asarray()</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A view of <code class="docutils literal notranslate"><span class="pre">arr</span></code> as an <a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndexableProperty</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty">IndexableProperty</a></p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>normalize</strong> (<em>bool</em>) – <p>Read/write property controlling automatic
+normalisation.  Setting</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vec</span><span class="o">.</span><span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>retroactively rescales the current data.</p>
+</p>
+</dd>
+</dl>
+<p><strong>Notes</strong></p>
+<ul>
+<li><p>Normalisation is performed along the <strong>last axis</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x} \leftarrow\]</div>
+</li>
+</ul>
+<p>rac{mathbf{x}}{lVert mathbf{x}
+Vert_2}</p>
+<ul class="simple">
+<li><p>When slicing, the returned view disables auto-normalisation so that
+scalar assignments do not accidentally rescale the parent array.</p></li>
+</ul>
+<p><strong>Examples</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">IndexableProperty</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">norm</span><span class="p">())</span>          <span class="c1"># 1.0</span>
+
+<span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                 <span class="c1"># assignment triggers renormalisation</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>                  <span class="c1"># [0.0, 1.0]</span>
+
+<span class="n">row</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:]</span>               <span class="c1"># slice → normal ndarray behaviour</span>
+<span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>                  <span class="c1"># still [0.0, 1.0]</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.IndexableProperty.normalize">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><a class="headerlink" href="#photon_canon.optics.IndexableProperty.normalize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">Medium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Container for the <em>optical properties</em> of a homogeneous layer (<span class="math notranslate nohighlight">\(n, \mu_s, \mu_a, g\)</span>) optionally specified as
+functions of wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>float</em>) – Refractive index of the medium.</p></li>
+<li><p><strong>mu_s</strong> (<em>float</em><em> | </em><em>numpy.ndarray</em>) – Scattering coefficient
+<span class="math notranslate nohighlight">\(\mu_s(\lambda)\,[\mathrm{mm}^{-1}]\)</span>
+(scalar <strong>or</strong> <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>).</p></li>
+<li><p><strong>mu_a</strong> (<em>float</em><em> | </em><em>numpy.ndarray</em>) – Absorption coefficient
+<span class="math notranslate nohighlight">\(\mu_a(\lambda)\,[\mathrm{mm}^{-1}]\)</span>
+(scalar <strong>or</strong> <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>).</p></li>
+<li><p><strong>wavelengths</strong> (<em>numpy.ndarray</em>) – Wavelength grid (nm) that matches any array
+inputs.  Defaults to the module-level
+<code class="docutils literal notranslate"><span class="pre">wl</span></code> variable.</p></li>
+<li><p><strong>ref_wavelength</strong> (<em>float</em>) – Reference wavelength (nm) used by
+correction utilities.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Scattering anisotropy factor
+(<span class="math notranslate nohighlight">\(-1 \le g \le 1\)</span>).</p></li>
+<li><p><strong>desc</strong> (<em>str</em>) – Human-readable description for <code class="docutils literal notranslate"><span class="pre">__str__</span></code>/<code class="docutils literal notranslate"><span class="pre">__repr__</span></code>.</p></li>
+<li><p><strong>display_color</strong> (<em>str</em><em> | </em><em>None</em>) – Hex/CSS colour to use when plotting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If <em>mu_s</em> or <em>mu_a</em> contains negative
+elements, or if <em>g</em> lies outside <span class="math notranslate nohighlight">\([-1, 1]\)</span>.</p>
+</dd>
+</dl>
+<p><strong>Computed attributes</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu_t</strong> – <p>Total attenuation coefficient</p>
+<div class="math notranslate nohighlight">
+\[\mu_t(\lambda) \;=\; \mu_s(\lambda)\;+\;\mu_a(\lambda)\]</div>
+</p></li>
+<li><p><strong>albedo</strong> – <p>Single-scattering albedo</p>
+<div class="math notranslate nohighlight">
+\[a(\lambda) \;=\; \frac{\mu_s(\lambda)}{\mu_t(\lambda)}\]</div>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Notes</strong></p>
+<ul class="simple">
+<li><p>Whenever <span class="math notranslate nohighlight">\(\mu_s = 0\)</span>, the corresponding <em>g</em> value is forced
+to 1 and a warning is issued.</p></li>
+<li><p>Array inputs can be queried at arbitrary wavelengths using the
+helper methods <code class="docutils literal notranslate"><span class="pre">mu_s_at</span></code>, <code class="docutils literal notranslate"><span class="pre">mu_a_at</span></code>, <code class="docutils literal notranslate"><span class="pre">mu_t_at</span></code> and
+<code class="docutils literal notranslate"><span class="pre">albedo_at</span></code> (linear interpolation).</p></li>
+</ul>
+<p><strong>Examples</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dermis</span> <span class="o">=</span> <span class="n">Medium</span><span class="p">(</span>
+    <span class="n">n</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span>
+    <span class="n">mu_s</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>          <span class="c1"># at 600, 650, 700 nm</span>
+    <span class="n">mu_a</span><span class="o">=</span><span class="p">[</span><span class="mf">0.30</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">],</span>
+    <span class="n">wavelengths</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">600</span><span class="p">,</span> <span class="mi">650</span><span class="p">,</span> <span class="mi">700</span><span class="p">]),</span>
+    <span class="n">g</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;dermis&quot;</span>
+<span class="p">)</span>
+
+<span class="n">dermis</span><span class="o">.</span><span class="n">mu_t_at</span><span class="p">(</span><span class="mi">650</span><span class="p">)</span>             <span class="c1"># 12.25 mm⁻¹</span>
+<span class="n">dermis</span><span class="o">.</span><span class="n">albedo_at</span><span class="p">([</span><span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">])</span>    <span class="c1"># array([0.9804, 0.9804])</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.Config">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#photon_canon.optics.Medium.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.Config.arbitrary_types_allowed">
+<span class="sig-name descname"><span class="pre">arbitrary_types_allowed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#photon_canon.optics.Medium.Config.arbitrary_types_allowed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.albedo">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">albedo</span></span><a class="headerlink" href="#photon_canon.optics.Medium.albedo" title="Link to this definition"></a></dt>
+<dd><p>Transpot albedo: <span class="math notranslate nohighlight">\(a = \frac{\mu_a}{\mu_t}\)</span></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.albedo_at">
+<span class="sig-name descname"><span class="pre">albedo_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.albedo_at" title="Link to this definition"></a></dt>
+<dd><p>Interpolate albedo at the query wavelength, returns global mu_s if no function for albedo.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.convert_to_array">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">convert_to_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.convert_to_array" title="Link to this definition"></a></dt>
+<dd><p>Ensure values (mu_s and mu_a) are non-negative.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#photon_canon.optics.Medium.desc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.display_color">
+<span class="sig-name descname"><span class="pre">display_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional[str]</span></em><a class="headerlink" href="#photon_canon.optics.Medium.display_color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.force_non_scatterers_g">
+<span class="sig-name descname"><span class="pre">force_non_scatterers_g</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.force_non_scatterers_g" title="Link to this definition"></a></dt>
+<dd><p>Turn g to 1 if mu_s is 0 to simplify modelling. Send a warning to the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Medium</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.g">
+<span class="sig-name descname"><span class="pre">g</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#photon_canon.optics.Medium.g" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.g_vals">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">g_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.g_vals" title="Link to this definition"></a></dt>
+<dd><p>Ensure g is in range [-1, 1]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#photon_canon.optics.Medium.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_a">
+<span class="sig-name descname"><span class="pre">mu_a</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span> <span class="pre">|</span> <span class="pre">np.ndarray</span></em><a class="headerlink" href="#photon_canon.optics.Medium.mu_a" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_a_at">
+<span class="sig-name descname"><span class="pre">mu_a_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.mu_a_at" title="Link to this definition"></a></dt>
+<dd><p>Interpolate mu_a at the query wavelength, returns global mu_s if no function for mu_a.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_s">
+<span class="sig-name descname"><span class="pre">mu_s</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span> <span class="pre">|</span> <span class="pre">np.ndarray</span></em><a class="headerlink" href="#photon_canon.optics.Medium.mu_s" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_s_at">
+<span class="sig-name descname"><span class="pre">mu_s_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.mu_s_at" title="Link to this definition"></a></dt>
+<dd><p>Interpolate mu_s at the query wavelength, returns global mu_s if no function for mu_s.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_t">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mu_t</span></span><a class="headerlink" href="#photon_canon.optics.Medium.mu_t" title="Link to this definition"></a></dt>
+<dd><p>Transport coefficient: <span class="math notranslate nohighlight">\(\mu_t = \mu_s + \mu_a\)</span></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.mu_t_at">
+<span class="sig-name descname"><span class="pre">mu_t_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.mu_t_at" title="Link to this definition"></a></dt>
+<dd><p>Interpolate mu_t at the query wavelength, returns global mu_s if no function for mu_t.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.n">
+<span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#photon_canon.optics.Medium.n" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.ref_wavelength">
+<span class="sig-name descname"><span class="pre">ref_wavelength</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#photon_canon.optics.Medium.ref_wavelength" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Medium.set" title="Link to this definition"></a></dt>
+<dd><p>Sets multiple attributes of the object in bulk.</p>
+<p>This method is useful for updating the medium’s attributes dynamically, particularly when modifying properties
+during iterative simulations while generating a lookup table. It assigns the provided keyword arguments to
+existing attributes of the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – A dictionary of attribute names and their corresponding new values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If a provided attribute name does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_canon.optics.Medium.wavelengths">
+<span class="sig-name descname"><span class="pre">wavelengths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">np.ndarray</span></em><a class="headerlink" href="#photon_canon.optics.Medium.wavelengths" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">Photon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directional_cosines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">russian_roulette_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursion_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursion_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throw_recursion_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_secondary_photons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tir_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simulated photon (or <strong>batch</strong> of photons) for Monte-Carlo light-transport modelling.</p>
+<dl class="simple">
+<dt>The object tracks each photon’s wavelength, position, direction and statistical weight while it propagates through</dt><dd><p>an optical <a class="reference internal" href="#photon_canon.optics.System" title="photon_canon.optics.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. Built-in routines handle movement, scattering, absorption,
+interface interactions and Russian-roulette termination.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of photons in the batch.</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em><em> | </em><em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Wavelength(s) in nanometres.</p></li>
+<li><p><strong>system</strong> (<a class="reference internal" href="#photon_canon.optics.System" title="photon_canon.optics.System"><em>System</em></a>) – Optical system that contains the batch.</p></li>
+<li><p><strong>directional_cosines</strong> (<a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty"><em>IndexableProperty</em></a>) – Direction cosines <em>(μ_x, μ_y, μ_z)</em> for every photon.</p></li>
+<li><p><strong>location_coordinates</strong> (<em>numpy.ndarray</em>) – Cartesian coordinates <em>(x, y, z)</em> for every photon.</p></li>
+<li><p><strong>weights</strong> (<em>numpy.ndarray</em>) – Statistical weights (initially 1.0).</p></li>
+<li><p><strong>russian_roulette_constant</strong> (<em>float</em>) – Survival threshold for Russian-roulette.</p></li>
+<li><p><strong>recurse</strong> (<em>bool</em>) – Enable creation of secondary photons.</p></li>
+<li><p><strong>recursion_depth</strong> (<em>int</em>) – Current recursion depth.</p></li>
+<li><p><strong>recursion_limit</strong> (<em>int</em>) – Maximum permitted recursion depth.</p></li>
+<li><p><strong>throw_recursion_error</strong> (<em>bool</em>) – Raise an error (<code class="docutils literal notranslate"><span class="pre">True</span></code>) or just warn (<code class="docutils literal notranslate"><span class="pre">False</span></code>) when the limit is exceeded.</p></li>
+<li><p><strong>keep_secondary_photons</strong> (<em>bool</em>) – Retain secondary photons once spawned.</p></li>
+<li><p><strong>tir_limit</strong> (<em>float</em>) – Cosine threshold for total-internal reflection.</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – Cumulative absorbed weight.</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – Cumulative reflected weight (back-exit).</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Cumulative transmitted weight (forward-exit).</p></li>
+<li><p><strong>exit_location</strong> (<em>numpy.ndarray</em>) – Terminal coordinates of each photon.</p></li>
+<li><p><strong>exit_direction</strong> (<em>numpy.ndarray</em>) – Terminal direction cosines.</p></li>
+<li><p><strong>exit_weights</strong> (<em>numpy.ndarray</em>) – Terminal weights.</p></li>
+<li><p><strong>location_history</strong> (<em>numpy.ndarray</em>) – Complete trajectory history <em>(steps × n × 3)</em>.</p></li>
+<li><p><strong>weights_history</strong> (<em>numpy.ndarray</em>) – Corresponding weight history <em>(steps × n)</em>.</p></li>
+<li><p><strong>cache_register</strong> (<em>numpy.ndarray</em>) – Boolean mask—medium lookup cached?</p></li>
+<li><p><strong>at_interface</strong> (<em>numpy.ndarray</em>) – Boolean mask—photon currently at an interface?</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Key methods</strong></p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> – construct a photon packet.</p></li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#photon_canon.optics.Photon.simulate" title="photon_canon.optics.Photon.simulate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simulate()</span></code></a> – propagate until all photons terminate (moves,</dt><dd><p>absorbs, scatters, handles interfaces).</p>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.absorb" title="photon_canon.optics.Photon.absorb"><code class="xref py py-meth docutils literal notranslate"><span class="pre">absorb()</span></code></a> – deposit weight according to medium albedo.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.move" title="photon_canon.optics.Photon.move"><code class="xref py py-meth docutils literal notranslate"><span class="pre">move()</span></code></a> – advance photons, handling boundary crossings.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.reflect_refract" title="photon_canon.optics.Photon.reflect_refract"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reflect_refract()</span></code></a> – deterministic update at interfaces with Fresnel/TIR handling.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.scatter" title="photon_canon.optics.Photon.scatter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">scatter()</span></code></a> – random direction change using phase function.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.russian_roulette" title="photon_canon.optics.Photon.russian_roulette"><code class="xref py py-meth docutils literal notranslate"><span class="pre">russian_roulette()</span></code></a> – survival test for low-weight photons.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.copy" title="photon_canon.optics.Photon.copy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">copy()</span></code></a> – deep copy of the photon packet.</p></li>
+<li><p><a class="reference internal" href="#photon_canon.optics.Photon.plot_path" title="photon_canon.optics.Photon.plot_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_path()</span></code></a> – visualise trajectories in 3-D or projection.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.absorb">
+<span class="sig-name descname"><span class="pre">absorb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.absorb" title="Link to this definition"></a></dt>
+<dd><p>Decrements the weights of the photon batch according to the albedo of the current medium.</p>
+<p>This method simulates the absorption of photons in the current medium. The weights of each photon is
+reduced based on the albedo, which represents the fraction of light that is reflected. The remaining
+weights is used to continue the photon simulation.</p>
+<p>The specific absorption process depends on the optical properties of the medium the photon is currently in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.copy" title="Link to this definition"></a></dt>
+<dd><p>Creates a deep copy of the Photon object and allows for overwriting specific attributes using kwargs.</p>
+<p>This method creates a new instance of the Photon object with the same attributes as the original. It can also
+overwrite the values of specified attributes using the keyword arguments passed to it. The tracker attributes
+(<cite>T</cite>, <cite>R</cite>, <cite>A</cite>, <cite>tir_count</cite>, <cite>recursed_photons</cite>) are automatically reset to 0 in all cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – Keyword arguments representing attributes to overwrite in the copied object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new Photon object that is a deep copy of the original – except it points to the same system – with
+overwritten attributes if provided.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#photon_canon.optics.Photon" title="photon_canon.optics.Photon">Photon</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.directional_cosines">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">directional_cosines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty"><span class="pre">IndexableProperty</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.Photon.directional_cosines" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the current value of the photon directional cosines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current value of the directional cosines, wrapped in an <cite>IndexableProperty</cite> object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#photon_canon.optics.IndexableProperty" title="photon_canon.optics.IndexableProperty">IndexableProperty</a>[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.headed_into">
+<span class="sig-name descname"><span class="pre">headed_into</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mediums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.headed_into" title="Link to this definition"></a></dt>
+<dd><p>Determines which medium a photon is headed into, particularly when at an interface.</p>
+<p>If <cite>mediums</cite> is provided, the function uses it instead of re-querying <code class="xref py py-meth docutils literal notranslate"><span class="pre">system.in_mediums()</span></code> to determine the
+current state. In cases where <cite>mediums</cite> contains tuples <cite>(Medium, Medium)</cite>, the function selects the appropriate
+medium based on direction:
+- The first element (index <cite>0</cite>) represents the negative-direction medium.
+- The second element (index <cite>1</cite>) represents the positive-direction medium.</p>
+<p>If <cite>mediums</cite> is not a tuple, the function simply returns the same medium.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mediums</strong> (<em>NDArray</em><em>[</em><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><em>Medium</em></a><em> | </em><em>Tuple</em><em>[</em><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><em>Medium</em></a><em>, </em><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><em>Medium</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – An optional array of mediums. Each element can be:
+- A <cite>Medium</cite> object, indicating a single medium.
+- A tuple <cite>(Medium, Medium)</cite>, representing a negative and positive medium pair at an interface.
+If not provided, the function queries <code class="xref py py-meth docutils literal notranslate"><span class="pre">system.in_mediums()</span></code> instead.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An array of <cite>Medium</cite> objects representing the medium the photon is headed into.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDArray[<a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium">Medium</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.is_terminated">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_terminated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#photon_canon.optics.Photon.is_terminated" title="Link to this definition"></a></dt>
+<dd><p>Checks if there are still photons in the batch to simulate.</p>
+<p>This property returns <cite>True</cite> if all photons have been terminated (i.e., they have exited the simulation
+or met termination criteria). Otherwise, it returns <cite>False</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean value indicating whether the simulation has completed for all photons.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.location_coordinates">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">location_coordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.Photon.location_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the current value of the photon location coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current value of the location coordinates as an np.ndarray.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NDArray[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.medium">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">medium</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><span class="pre">Medium</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.Photon.medium" title="Link to this definition"></a></dt>
+<dd><p>Determines the current medium for the photons. If the current medium is cached, it is returned from the cache,
+otherwise it is updated by querying the system with the location.</p>
+<p>If the photons are at an interface, the function returns the medium the photon is moving into,
+using <cite>headed_into</cite>. Otherwise, it returns the current medium.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An array of <cite>Medium</cite> objects representing the current medium for the photons.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NDArray[<a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium">Medium</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.move">
+<span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.move" title="Link to this definition"></a></dt>
+<dd><p>Moves the photon one step in its current direction.</p>
+<p>The size of the step can be either provided directly, or it can be determined by the mean free path of the
+current medium, which is calculated from the transport coefficient (mu_t). If the photon is in a medium with
+mu_t = 0 (i.e., no scattering or absorption), the photon will automatically advance to the next interface along
+its direction.</p>
+<p>If a step size is provided, the photon moves in the direction specified by its directional cosines until it
+either completes the step or hits an interface. If the full step would cross an interface, only the portion of
+the step before the interface is executed. At the interface, the photon is refracted and reflected according to
+the media properties, and its weights is updated (decremented) based on the interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step</strong> (<em>float</em><em> | </em><em>Iterable</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – The distance the photon should move. If not provided, the step size is sampled based on the mean
+free path, <span class="math notranslate nohighlight">\(-\frac{\ln\xi}{\mu_t}\)</span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <em>step</em> is an array of incompatible shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. The photon’s location coordinates and directions are updated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.plot_path">
+<span class="sig-name descname"><span class="pre">plot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_onto</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_outside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.plot_path" title="Link to this definition"></a></dt>
+<dd><p>Visualizes the photon location histories as a 2D or 3D plot.</p>
+<ul class="simple">
+<li><p>If <cite>project_onto</cite> is specified, the path is projected onto a 2D plane.
+Accepted values: ‘xy’, ‘xz’, ‘yz’.</p></li>
+<li><p>If <cite>project_onto</cite> is None, a 3D plot is generated.</p></li>
+<li><p>If <cite>axes</cite> is provided, the plot is drawn on the given <cite>matplotlib.Axes</cite> object.
+Otherwise, a new figure and axes are created.</p></li>
+<li><p>If <cite>ignore_outside</cite> is True (default), only locations within the system are plotted,
+and steps after exit are truncated.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_onto</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Plane onto which the path is projected (‘xy’, ‘xz’, ‘yz’), or None for 3D.</p></li>
+<li><p><strong>axes</strong> (<em>Optional</em><em>[</em><em>plt.Axes</em><em>]</em>) – Matplotlib Axes object for plotting, or None to create new axes.</p></li>
+<li><p><strong>ignore_outside</strong> (<em>bool</em>) – Whether to ignore steps after exiting the system (default: True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.reflect_refract">
+<span class="sig-name descname"><span class="pre">reflect_refract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interfaces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.reflect_refract" title="Link to this definition"></a></dt>
+<dd><p>Computes photon reflection and refraction at interfaces.</p>
+<p>This method determines the weight of photon reflection and updates the tracker’s direction accordingly.
+If reflection occurs, it either updates the photon direction or spawns secondary photons with adjusted weights
+to continue the recursive simulation. The photon’s direction is updated based on the interface’s refractive
+values. This operation is performed only on photons specified by the input mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interfaces</strong> (<em>np.ndarray</em><em>[</em><em>object</em><em>]</em>) – NumPy array containing interface definitions.
+Each element is a tuple of (Medium, Medium) for a valid interface or (None,) if no interface
+is present.</p></li>
+<li><p><strong>mask</strong> (<em>NDArray</em><em>[</em><em>bool</em><em>]</em>) – Boolean mask indicating which photons to process.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. The photon’s direction and weight are updated along with relevant trackers,
+and secondary photons are spawned if necessary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.russian_roulette">
+<span class="sig-name descname"><span class="pre">russian_roulette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.russian_roulette" title="Link to this definition"></a></dt>
+<dd><p>Determines photon survival using the Russian roulette technique.</p>
+<p>If a photon survives, its weights is increased by <cite>self.russian_roulette_constant</cite>.
+If it does not survive, its weights is set to <cite>0</cite>, effectively terminating it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<em>NDArray</em><em>[</em><em>bool</em><em>]</em>) – A boolean array where <cite>True</cite> indicates that the corresponding photon is
+subject to the Russian roulette survival test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This method modifies photon weights in place and does not return a value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.scatter">
+<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta_phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.scatter" title="Link to this definition"></a></dt>
+<dd><p>This method updates the direction of the photon members where they are in scattering media, but not at an
+interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>theta_phi</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Angles to update direction with. Optional.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. Updates photon directions where the photon is in scattering media (but not at an interface)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.Photon.simulate" title="Link to this definition"></a></dt>
+<dd><p>Simulates the behavior of a batch of photons until all photons are terminated and updates the object’s
+attributes accordingly.</p>
+<p>The simulation involves the following steps:
+- <strong>Absorption</strong>: Photons interact with the medium and may be absorbed. (See <cite>self.absorb</cite>).
+- <strong>Movement</strong>: Photons move within the medium. (See <cite>self.move</cite>).
+- <strong>Scattering</strong>: Photons may scatter as they travel through the medium. (See <cite>self.scatter</cite>).</p>
+<p>The exact behavior of these events depends on the optical properties of the <cite>Medium</cite> object the photon is in,
+which is determined through queries to the <cite>System</cite> that contains the photon, i.e., <cite>self.system</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This method runs the simulation and does not return any value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.Photon.weights">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.Photon.weights" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the current weights of the photons.
+Retrieves the current weights of the photons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An array of float values representing the photon weights.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NDArray[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_canon.optics.System">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.optics.</span></span><span class="sig-name descname"><span class="pre">System</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrounding_n=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">illuminator=IlluminationObject(pattern=&lt;function</span> <span class="pre">pencil_beams&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum=None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector=(Detector_object(acceptor=f&lt;function</span> <span class="pre">total_acceptor&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.System.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System.add" title="Link to this definition"></a></dt>
+<dd><p>Adds a new layer of a given depth to the system.</p>
+<p>This method inserts a new <cite>Medium</cite> layer at the specified depth. If the preceding layer was
+semi-infinite, an error is raised. The method automatically replaces the surrounding filler layer
+before adding the new layer and ensures that the system remains properly bounded, extending back
+to infinity if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><em>Medium</em></a>) – The <cite>Medium</cite> object representing the new layer.</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – The thickness of the new layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the preceding layer is semi-infinite.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.System.beam">
+<span class="sig-name descname"><span class="pre">beam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System.beam" title="Link to this definition"></a></dt>
+<dd><p>Gets a batch of photons from the integrated Illumination object.
+:type batch_size: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>
+:param batch_size: The number of photons to return.
+:type batch_size: int
+:type kwargs: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>
+:param kwargs: Additional keyword arguments to pass to the <cite>Photon</cite> constructor.
+:return: A <cite>Photon</cite> object sampled from the system’s illumination.
+:rtype: Photon</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.System.boundaries">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">boundaries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.System.boundaries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.System.in_medium">
+<span class="sig-name descname"><span class="pre">in_medium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System.in_medium" title="Link to this definition"></a></dt>
+<dd><p>Return the medium(s) that are at the queried coordinate. If the coordinate is an interfaces location, the
+mediums that makeup the interfaces are returned as a tuple, this includes boundary interfaces being returned
+with False on the surroundings side.</p>
+<p>### Process
+1. Get the z-coordinate from the input
+2. Check it against boundaries of each medium of the system until it is found that either:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>It is between any of the boundaries, it is in the medium within those boundaries</p></li>
+<li><p>It is at a boundary, it is “in” the two mediums that make up that interfaces</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Break and return the medium(s) of the queried point.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>location</strong> (<em>tuple</em><em>, </em><em>list</em><em>, </em><em>ndarray</em><em>, </em><em>float</em><em>, or </em><em>int</em>) – The coordinates or z-coordinate to query.</p>
+</dd>
+<dt class="field-even">Return in_<cite>in_</cite><span class="colon">:</span></dt>
+<dd class="field-even"><p>The medium of the queried z-coordinate or a tuple of interfaces if the coordinate is at an interfaces</p>
+</dd>
+<dt class="field-odd">Rtype in_<cite>in_</cite><span class="colon">:</span></dt>
+<dd class="field-odd"><p>medium | tuple of medium</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Medium</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Medium</span></code></a>, <a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><code class="xref py py-class docutils literal notranslate"><span class="pre">Medium</span></code></a>]]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.System.interface_crossed">
+<span class="sig-name descname"><span class="pre">interface_crossed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System.interface_crossed" title="Link to this definition"></a></dt>
+<dd><p>Determines the first interfaces crossed when moving between two locations, considering only the z-coordinates.</p>
+<p>This method checks if any interfaces boundaries lie between the given z-coordinates. If an interfaces is crossed,
+the method calculates its z-location and identifies the two mediums forming the interfaces.</p>
+<p>### Process:
+1. Identify boundaries that fall between the start and end z-coordinates.
+2. Compute the distance from the start z-coordinate to each boundary.
+3. Apply a mask to filter boundaries that are actually crossed.
+4. Select the closest crossed boundary as the interfaces plane.
+5. Determine the two mediums making up the interfaces by slightly shifting the plane’s z-coordinate:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Backwards (toward the start) to find the first medium.</p></li>
+<li><p>Forwards (away from the start) to find the second medium.</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location1</strong> (<span class="sphinx_autodoc_typehints-type">Iterable[float]</span>) – Starting location of the query.</p></li>
+<li><p><strong>location2</strong> – Ending location of the query.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type">Tuple[Medium | (), float | None]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The two media forming the crossed interfaces, or an empty list <cite>[]</cite> if no interfaces is crossed and
+plane at which the interface is crossed or None.</p>
+</dd>
+<dt class="field-even">Rtype interfaces<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[Medium | (), float | None])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_canon.optics.System.represent_on_axis">
+<span class="sig-name descname"><span class="pre">represent_on_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.optics.System.represent_on_axis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="photon_canon.optics.System.stack">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stack</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#photon_canon.optics.Medium" title="photon_canon.optics.Medium"><span class="pre">Medium</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#photon_canon.optics.System.stack" title="Link to this definition"></a></dt>
+<dd><p>Provides an up-to-date dictionary representation of layer boundaries.</p>
+<p>This property dynamically constructs a dictionary mapping layer boundaries to their corresponding
+layers. It is useful for querying interfaces efficiently in float-time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary where keys are tuples representing layer boundaries (lower_bound, upper_bound),
+and values are the corresponding layers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[tuple[float, float], Layer]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="photon_canon.lut.utils.html" class="btn btn-neutral float-left" title="photon_canon.lut.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="photon_canon.utils.html" class="btn btn-neutral float-right" title="photon_canon.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

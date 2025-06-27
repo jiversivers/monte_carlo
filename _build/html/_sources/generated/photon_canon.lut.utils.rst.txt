@@ -1,0 +1,28 @@
+photon\_canon.lut.utils
+=======================
+
+.. automodule:: photon_canon.lut.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      add_metadata
+      add_simulation_result
+      add_system_data
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Dimensions
+      ListPortion
+      classOrInstanceMethod
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      LUTError
+   

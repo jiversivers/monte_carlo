@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photon_canon.contrib.diffusion_theory &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="photon_canon.contrib.food_coloring" href="photon_canon.contrib.food_coloring.html" />
+    <link rel="prev" title="photon_canon.contrib.bio" href="photon_canon.contrib.bio.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.bio.html">photon_canon.contrib.bio</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">photon_canon.contrib.diffusion_theory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">create_diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">create_integrated_diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.cylindrical_distance"><code class="docutils literal notranslate"><span class="pre">cylindrical_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.fresnel_equation"><code class="docutils literal notranslate"><span class="pre">fresnel_equation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.food_coloring.html">photon_canon.contrib.food_coloring</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Photon Canon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.bio.html">photon_canon.contrib.bio</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">photon_canon.contrib.diffusion_theory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">create_diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">create_integrated_diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.cylindrical_distance"><code class="docutils literal notranslate"><span class="pre">cylindrical_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.diffusion_approximation"><code class="docutils literal notranslate"><span class="pre">diffusion_approximation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.fresnel_equation"><code class="docutils literal notranslate"><span class="pre">fresnel_equation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.food_coloring.html">photon_canon.contrib.food_coloring</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.html">photon_canon</a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+      <li class="breadcrumb-item active">photon_canon.contrib.diffusion_theory</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/photon_canon.contrib.diffusion_theory.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-photon_canon.contrib.diffusion_theory">
+<span id="photon-canon-contrib-diffusion-theory"></span><h1>photon_canon.contrib.diffusion_theory<a class="headerlink" href="#module-photon_canon.contrib.diffusion_theory" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_diffusion_approximation" title="photon_canon.contrib.diffusion_theory.create_diffusion_approximation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_diffusion_approximation</span></code></a>([r, alpha_i, ...])</p></td>
+<td><p>Factory function to create a callable diffusion approximation with pre-set parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation" title="photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_integrated_diffusion_approximation</span></code></a>(r_range)</p></td>
+<td><p>Build a callable that returns the <strong>radially integrated diffuse reflectance</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.cylindrical_distance" title="photon_canon.contrib.diffusion_theory.cylindrical_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cylindrical_distance</span></code></a>(rtz, rtz_prime)</p></td>
+<td><p>Calculate the distance between two cylindrical points as</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.diffusion_approximation" title="photon_canon.contrib.diffusion_theory.diffusion_approximation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffusion_approximation</span></code></a>(mu_s, mu_a[, r, ...])</p></td>
+<td><p>Calculate the <strong>steady-state diffuse reflectance</strong> <span class="math notranslate nohighlight">\(R_d(r)\)</span> predicted by the diffusion approximation for a semi-infinite, homogeneous medium illuminated at its surface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.contrib.diffusion_theory.fresnel_equation" title="photon_canon.contrib.diffusion_theory.fresnel_equation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fresnel_equation</span></code></a>([alpha_i, n_rel])</p></td>
+<td><p>Fresnel equation for specular reflection,</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.diffusion_theory.create_diffusion_approximation">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.diffusion_theory.</span></span><span class="sig-name descname"><span class="pre">create_diffusion_approximation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.33</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.diffusion_theory.create_diffusion_approximation" title="Link to this definition"></a></dt>
+<dd><p>Factory function to create a callable diffusion approximation with pre-set parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>float</em>) – Radial distance from the source.</p></li>
+<li><p><strong>alpha_i</strong> (<em>float</em>) – Incident angle of the source.</p></li>
+<li><p><strong>n_rel</strong> (<em>float</em>) – Relative indices of refraction at the surface interface.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Scatter anisotropy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A callable diffusion approximation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[float, float], float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.diffusion_theory.</span></span><span class="sig-name descname"><span class="pre">create_integrated_diffusion_approximation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.33</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.diffusion_theory.create_integrated_diffusion_approximation" title="Link to this definition"></a></dt>
+<dd><p>Build a callable that returns the <strong>radially integrated diffuse
+reflectance</strong></p>
+<div class="math notranslate nohighlight">
+\[\tilde{R}_d(\mu_s, \mu_a)
+\;=\;
+2\pi \int_{r_{\min}}^{r_{\max}}
+r \, R_d\!\bigl(r;\mu_s,\mu_a\bigr)\;dr,\]</div>
+<p>where <span class="math notranslate nohighlight">\(R_d(r;\mu_s,\mu_a)\)</span> is the spatially resolved
+reflectance given by <a class="reference internal" href="#photon_canon.contrib.diffusion_theory.diffusion_approximation" title="photon_canon.contrib.diffusion_theory.diffusion_approximation"><code class="xref py py-func docutils literal notranslate"><span class="pre">diffusion_approximation()</span></code></a>.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>r_range<span class="classifier">(float, float)</span></dt><dd><p>Integration bounds <span class="math notranslate nohighlight">\((r_{\min}, r_{\max})\)</span> in millimetres.</p>
+</dd>
+<dt>alpha_i<span class="classifier">float, optional</span></dt><dd><p>Angle of incidence of the illumination in <strong>radians</strong>
+(<code class="docutils literal notranslate"><span class="pre">0</span></code> ⇒ normal incidence). Default <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+</dd>
+<dt>n_rel<span class="classifier">float, optional</span></dt><dd><p>Relative refractive index <span class="math notranslate nohighlight">\(n_2/n_1\)</span>
+(tissue / external medium). Default <code class="docutils literal notranslate"><span class="pre">1.33</span></code>.</p>
+</dd>
+<dt>g<span class="classifier">float, optional</span></dt><dd><p>Scattering anisotropy factor. Default <code class="docutils literal notranslate"><span class="pre">0.9</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>Callable[[float, float], float]</dt><dd><p>A function <code class="docutils literal notranslate"><span class="pre">f(mu_s,</span> <span class="pre">mu_a)</span></code> that evaluates
+<span class="math notranslate nohighlight">\(\tilde{R}_d(\mu_s,\mu_a)\)</span> using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<p>The integrand is</p>
+<div class="math notranslate nohighlight">
+\[f(r,\mu_s,\mu_a)
+\;=\;
+2\pi\,r\,R_d(r;\mu_s,\mu_a),\]</div>
+<p>so the returned function effectively computes</p>
+<div class="math notranslate nohighlight">
+\[\tilde{R}_d(\mu_s,\mu_a)
+\;=\;
+\int_{r_{\min}}^{r_{\max}} f(r,\mu_s,\mu_a)\;dr.\]</div>
+<p>The numerical integration is performed with adaptive quadrature
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code>).</p>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h2>
+<p>diffusion_approximation : Point-wise diffusion reflectance model.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">integ_Rd</span> <span class="o">=</span> <span class="n">create_integrated_diffusion_approximation</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">integ_Rd</span><span class="p">(</span><span class="n">mu_s</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">mu_a</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="go">0.0487</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.diffusion_theory.cylindrical_distance">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.diffusion_theory.</span></span><span class="sig-name descname"><span class="pre">cylindrical_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rtz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtz_prime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.diffusion_theory.cylindrical_distance" title="Link to this definition"></a></dt>
+<dd><p>Calculate the distance between two cylindrical points as</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rtz</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The three cylindrical coordinates (ρ, φ, z) of a point P</p></li>
+<li><p><strong>rtz_prime</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The three cylindrical coordinates (ρ, φ, z) of a point P’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The distance between two cylindrical points</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.diffusion_theory.diffusion_approximation">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.diffusion_theory.</span></span><span class="sig-name descname"><span class="pre">diffusion_approximation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.33</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.diffusion_theory.diffusion_approximation" title="Link to this definition"></a></dt>
+<dd><p>Calculate the <strong>steady-state diffuse reflectance</strong> <span class="math notranslate nohighlight">\(R_d(r)\)</span>
+predicted by the diffusion approximation for a semi-infinite,
+homogeneous medium illuminated at its surface.</p>
+<p>The formulation follows Farrell <em>et al.</em> (1992) and
+accounts for oblique illumination by adjusting the effective
+source depth and radial offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu_s</strong> (<em>float</em>) – Scattering coefficient <span class="math notranslate nohighlight">\(\mu_s\;[\text{mm}^{-1}]\)</span>.</p></li>
+<li><p><strong>mu_a</strong> (<em>float</em>) – Absorption coefficient <span class="math notranslate nohighlight">\(\mu_a\;[\text{mm}^{-1}]\)</span>.</p></li>
+<li><p><strong>r</strong> (<em>float</em><em>, </em><em>optional</em>) – Radial distance on the surface where <span class="math notranslate nohighlight">\(R_d\)</span> is evaluated (in mm). Default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>alpha_i</strong> (<em>float</em><em>, </em><em>optional</em>) – Angle of incidence of the source in <strong>radians</strong> (<code class="docutils literal notranslate"><span class="pre">0</span></code> = normal incidence). Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+<li><p><strong>n_rel</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative refractive index <span class="math notranslate nohighlight">\(n_2/n_1\)</span> (tissue / external medium). Default is <code class="docutils literal notranslate"><span class="pre">1.33</span></code>.</p></li>
+<li><p><strong>g</strong> (<em>float</em><em>, </em><em>optional</em>) – Scattering anisotropy factor. Default is <code class="docutils literal notranslate"><span class="pre">0.9</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Diffuse reflectance <span class="math notranslate nohighlight">\(R_d(r)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<section id="id1">
+<h2>Notes<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>The diffusion approximation is valid when
+<span class="math notranslate nohighlight">\(\mu_s' \gg \mu_a\)</span>, where the <strong>reduced scattering
+coefficient</strong> is <span class="math notranslate nohighlight">\(\mu_s' = (1-g)\,\mu_s\)</span>.
+Key intermediate quantities are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mu_t' &amp;= \mu_s' + \mu_a \\
+l'     &amp;= \frac{1}{\mu_t'} \\
+a'     &amp;= \frac{\mu_s'}{\mu_t'} \\[6pt]
+D      &amp;= \frac{1}{3\left(\mu_s' + \beta\mu_a\right)}, \qquad
+         \beta = \begin{cases}
+           1 &amp; \text{normal incidence} \\
+           0.35 &amp; \text{oblique incidence}
+         \end{cases} \\[6pt]
+\mu_{\mathrm{eff}} &amp;= \sqrt{\frac{\mu_a}{D}}\end{split}\]</div>
+<p>The diffuse reflectance is</p>
+<div class="math notranslate nohighlight">
+\[R_d(r) \;=\; \bigl(1-R_{\mathrm{sp}}\bigr)
+\Bigl[
+    a' z' \,
+    \frac{\bigl(1+\mu_{\mathrm{eff}}\rho_1\bigr)
+          e^{-\mu_{\mathrm{eff}}\rho_1}}{4\pi\rho_1^{3}}
+    \;+\;
+    a'\!\bigl(z' + 4D\bigr)
+    \frac{\bigl(1+\mu_{\mathrm{eff}}\rho_2\bigr)
+          e^{-\mu_{\mathrm{eff}}\rho_2}}{4\pi\rho_2^{3}}
+\Bigr],\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho_1\)</span> and <span class="math notranslate nohighlight">\(\rho_2\)</span> are the distances from the
+observation point to the real and image sources, respectively, and
+<span class="math notranslate nohighlight">\(R_{\mathrm{sp}}\)</span> is the specular Fresnel reflectance.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p><strong>M. W. Farrell, M. S. Patterson, B. C. Wilson</strong>
+<em>A diffusion-theory model of spatially resolved, steady-state
+diffuse reflectance for the noninvasive determination of tissue
+optical properties in vivo.</em> Medical Physics <strong>19</strong> (1992) 879–888.</p>
+</aside>
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p><strong>S. L. Jacques</strong>
+<em>Optical properties of biological tissues: a review.</em>
+Physics in Medicine &amp; Biology <strong>58</strong> (2013) R37–R61.</p>
+</aside>
+</aside>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.diffusion_theory.fresnel_equation">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.diffusion_theory.</span></span><span class="sig-name descname"><span class="pre">fresnel_equation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha_i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.diffusion_theory.fresnel_equation" title="Link to this definition"></a></dt>
+<dd><p>Fresnel equation for specular reflection,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha_i</strong> (<em>float</em>) – Incident angle</p></li>
+<li><p><strong>n_rel</strong> (<em>float</em>) – n2 / n1 of the interface</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fraction of reflected intensity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="photon_canon.contrib.bio.html" class="btn btn-neutral float-left" title="photon_canon.contrib.bio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="photon_canon.contrib.food_coloring.html" class="btn btn-neutral float-right" title="photon_canon.contrib.food_coloring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

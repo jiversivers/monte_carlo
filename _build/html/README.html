@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photon Canon &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=b3e23499"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="photon_canon.utils" href="generated/photon_canon.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/photon_canon.html">photon_canon</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Photon Canon</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-description">Project Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#different-builds">Different builds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon-canon-objects">Photon-canon objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon">Photon</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#scattering">Scattering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#absorption">Absorption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move">Move</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#medium">Medium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system">System</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#illuminator">Illuminator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detector">Detector</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-install">Basic Install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cuda-systems">CUDA Systems</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="generated/photon_canon.html">photon_canon</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Photon Canon</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="photon-canon">
+<h1>Photon Canon<a class="headerlink" href="#photon-canon" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>A python toolbox for in-depth 3D Monte Carlo simulation with custom systems of planar mediums, custom beams and
+detectors</p>
+</div></blockquote>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#project-description"><span class="xref myst">Project Description</span></a></p></li>
+<li><p><a class="reference internal" href="#installation"><span class="xref myst">Installation</span></a></p></li>
+<li><p><a class="reference internal" href="#documentation"><span class="xref myst">Documentation</span></a></p></li>
+</ul>
+</section>
+<section id="project-description">
+<h2>Project Description<a class="headerlink" href="#project-description" title="Link to this heading"></a></h2>
+<p>Photon-canon is a fully parallel Monte Carlo simulation framework with support for custom optical systems and devices.
+Users can create custom optical <code class="docutils literal notranslate"><span class="pre">Medium</span></code> objects with wavelength-dependent attributes, stack these into planar <code class="docutils literal notranslate"><span class="pre">System</span></code>
+objects, and simulate <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects within their system. The injection of <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects can be controlled through
+user-defined custom <code class="docutils literal notranslate"><span class="pre">Illumination</span></code> objects that define direction and location of <code class="docutils literal notranslate"><span class="pre">Photon</span></code> initialization, with simple
+compatibility with user-defined samplers. Additionally, custom <code class="docutils literal notranslate"><span class="pre">Detector</span></code> objects provide spatial resolution for
+<code class="docutils literal notranslate"><span class="pre">Photon</span></code> exit locations, to provide precise forward-problem modelling that can decrease loss in inverse fitting.</p>
+<p><code class="docutils literal notranslate"><span class="pre">System</span></code> and <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects also include plot features to allow for qualitatively troubleshooting and checks for
+expected behaviors. These also are just fun to look at.</p>
+<p><img alt="Current simulation plot" src="_images/simulation.png" /></p>
+<p><strong>Try it for yourself.</strong> Submit a <a class="reference external" href="https://www.github.com/jiversivers/photon_canon/issues/new/choose">Simulate Me!</a>
+issue to update the sample simulation shown here with your own parameters.</p>
+<section id="different-builds">
+<h3>Different builds<a class="headerlink" href="#different-builds" title="Link to this heading"></a></h3>
+<p>The default build (with <code class="docutils literal notranslate"><span class="pre">cupy</span></code>) provides vectorized GPU-compatibility for rapid, parallel generation of simulation-based
+lookup tables. When run on the CPU, the <code class="docutils literal notranslate"><span class="pre">numpy</span></code> build still provides an at least order of magnitudes speed up over
+equivalent one-by-one simulations. When installing on a system without a CUDA-compatible GPU, the <code class="docutils literal notranslate"><span class="pre">numpy</span></code> build must be
+used. See <a class="reference internal" href="#install-with-pip"><span class="xref myst">installation</span></a> for more details.</p>
+</section>
+<section id="photon-canon-objects">
+<h3>Photon-canon objects<a class="headerlink" href="#photon-canon-objects" title="Link to this heading"></a></h3>
+<p><strong>Photon canon</strong> is built on key optics objects that drive the simulation power. These objects are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/photon_canon.optics.html#photon_canon.optics.Illumination.photon" title="photon_canon.optics.Illumination.photon"><span class="xref myst py py-meth">Photon</span></a></p></li>
+<li><p><a class="reference internal" href="generated/photon_canon.optics.html#photon_canon.optics.Photon.medium" title="photon_canon.optics.Photon.medium"><span class="xref myst py py-attr">Medium</span></a></p></li>
+<li><p><a class="reference internal" href="#system"><span class="xref myst">System</span></a></p></li>
+<li><p><a class="reference internal" href="#illuminator"><span class="xref myst">Illuminator</span></a></p></li>
+<li><p><a class="reference internal" href="#detector"><span class="xref myst">Detector</span></a></p></li>
+</ul>
+</section>
+<section id="photon">
+<h3>Photon<a class="headerlink" href="#photon" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Photon</span></code> object type is the real work-horse of the simulation. The <code class="docutils literal notranslate"><span class="pre">Photon</span></code> object is a bit of a misnomer, as it
+should actually be thought of as a packet of photons. By allowing the object to actually hold many thousands of photon,
+simulations can be parallelized to greatly increase the speed. A <code class="docutils literal notranslate"><span class="pre">Photon</span></code> object may have any <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> that a
+systems memory can handle, but is single in its wavelength and system, however. The output attributes, T, R, and A are
+trackers of all <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> members. When considering the appropriate <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>, many factors come into play. A
+<code class="docutils literal notranslate"><span class="pre">Photon</span></code> object will occupy a space on memory depending on the number of steps of a simulation, which is dependent on
+the properties of the <code class="docutils literal notranslate"><span class="pre">System</span></code>. Generally, a low-absorbing, high-scattering system will have long simulations, so
+<code class="docutils literal notranslate"><span class="pre">batch_size</span></code> should be smaller. High-abosrbing, low-scattering systems will simulate in very few steps, and can handle
+higher <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> inputs. Consider that the location coordinates for a <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> of 50,000 occupy ~1.2 GB of
+memory. As the <code class="docutils literal notranslate"><span class="pre">Photon</span></code> is simulated, its space in RAM only increases as trackers of <code class="docutils literal notranslate"><span class="pre">weight</span></code> and <code class="docutils literal notranslate"><span class="pre">location</span></code> augment.
+The <code class="docutils literal notranslate"><span class="pre">Photon</span></code> object is responsible for tracking and updating the information of the simulation, including all photon
+locations, directions, current mediums, weights, etc. It is fully vectorized and supports recursing photons, that are
+created at index-mismatched interface reflections. The precision with which this framework was designed, does open the
+door for very long-lived photons, either through deep recursion (though this is unlikely), or through total internal
+reflection (this is much more probable). Options are included to limit these behaviors, though it is recommended that
+they are left on initially, and only switched off or limited if necessary. In most cases, these behaviors have minimal
+effect in simulation time, but have slight impacts on simulation outputs. Members of <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects can be simulated
+until they are terminated, which occurs when they either exit their <code class="docutils literal notranslate"><span class="pre">System</span></code> or have a weight of 0. Once they are
+terminated, their location and direction will not change, but the full object simulation may continue until all members
+are terminated, at which point, querying <code class="docutils literal notranslate"><span class="pre">photon.is_terminated</span></code> returns <code class="docutils literal notranslate"><span class="pre">True</span></code>, and additional simulation steps will
+have no effect (though <code class="docutils literal notranslate"><span class="pre">move()</span></code> method calls will extend the location history trivially). <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects include
+attributes, T, R, and A, to track cummulative outcomes of members. They can be simulated manually and step-wise using
+<code class="docutils literal notranslate"><span class="pre">absorb()</span></code>, <code class="docutils literal notranslate"><span class="pre">move()</span></code>, and <code class="docutils literal notranslate"><span class="pre">scatter()</span></code> methods, or using the builtin <code class="docutils literal notranslate"><span class="pre">simulate()</span></code> method which runs until all members are
+terminated.</p>
+<section id="scattering">
+<h4>Scattering<a class="headerlink" href="#scattering" title="Link to this heading"></a></h4>
+<p>Scattering when g is not 0 is based on the Henyey-Greenstein phase function following equation:</p>
+<img src="https://latex.codecogs.com/svg.latex?\cos(\theta)%20=%20\begin{cases}%20\frac{1}{2g}%20\left(1%20+%20g^2%20-%20\left(\frac{1%20-%20g^2}{1%20-%20g%20+%202g\xi}%20\right)^2%20\right),%20&%20g%20\neq%200%20\\%201%20-%202\xi,%20&%20g%20=%200%20\end{cases}">
+<p>and the polar angle is updated using a uniform distribution between 0 and 2π:</p>
+<img src="https://latex.codecogs.com/svg.latex?\phi=2\pi\xi">
+</section>
+<section id="absorption">
+<h4>Absorption<a class="headerlink" href="#absorption" title="Link to this heading"></a></h4>
+<p>Absorption simply updates the weight as follows</p>
+<img src="https://latex.codecogs.com/svg.latex?W\mathrel{-}\mathrel{=}\frac{\mu_a}{\mu_a+\mu_s}W">
+</section>
+<section id="move">
+<h4>Move<a class="headerlink" href="#move" title="Link to this heading"></a></h4>
+<p>Step sizes (when not input by the user) are determined for the moves by sampling the mean free path based on the
+total interaction coefficient, μ<sub>t</sub>, defined as:</p>
+<img src="https://latex.codecogs.com/svg.latex?\mu_t=\mu_s+\mu_a">
+<p>Sampling is derived using the inverse distribution method and Beer-Lambert Law, yielding the following:</p>
+<img src="https://latex.codecogs.com/svg.latex?s=-\frac{\ln\xi}{\mu_t}">
+</section>
+<section id="medium">
+<h4>Medium<a class="headerlink" href="#medium" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">Medium</span></code> objects are simply wrappers for optical properties, namely, n, μ<sub>s</sub>, μ<sub>a</sub>, and g.
+These properties can either be defined as scalars for the <code class="docutils literal notranslate"><span class="pre">medium</span></code> or as a wavelength-dependent arrays that can then be
+interpolated used to determine their value at an input wavelength. <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects query the medium to determine the
+necessary properties of their current medium at any point. The <code class="docutils literal notranslate"><span class="pre">Photon</span></code> only ‘knows’ the properties of the location it
+in, nothing else. The <code class="docutils literal notranslate"><span class="pre">Medium</span></code> object, when stacked into a system, gives the <code class="docutils literal notranslate"><span class="pre">Photon</span></code> this information.</p>
+</section>
+<section id="system">
+<h4>System<a class="headerlink" href="#system" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">System</span></code> objects are the connection between <code class="docutils literal notranslate"><span class="pre">Medium</span></code> and <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects. A <code class="docutils literal notranslate"><span class="pre">System</span></code> is made up of one or more <code class="docutils literal notranslate"><span class="pre">Medium</span></code>
+objects stacked with specified thicknesses from 0 cm and on. <code class="docutils literal notranslate"><span class="pre">System</span></code> objects can be finite or semi-infinite. Finite
+<code class="docutils literal notranslate"><span class="pre">System</span></code> objects are filled on both the negative and positive infinity sides with <code class="docutils literal notranslate"><span class="pre">surroundings</span></code>. When semi-infinite,
+they will be filled with <code class="docutils literal notranslate"><span class="pre">surroundings</span></code> only on the negative infinity side. The n of surroundings can be manually
+defined in the <code class="docutils literal notranslate"><span class="pre">System</span></code>, as this value controls the reflection intensity of exiting <code class="docutils literal notranslate"><span class="pre">Photon</span></code> objects. For most
+light-matter interactions that this framework simulates, the <code class="docutils literal notranslate"><span class="pre">Photon</span></code> object uses the <code class="docutils literal notranslate"><span class="pre">System</span></code> as a mediator to query
+the optical properties of the <code class="docutils literal notranslate"><span class="pre">Medium</span></code>, as the <code class="docutils literal notranslate"><span class="pre">System</span></code> holds the spatial information necessary to determine the current
+medium, given a location. The <code class="docutils literal notranslate"><span class="pre">System</span></code> is also key in detemrming the completion of simulation, as a <code class="docutils literal notranslate"><span class="pre">Photon</span></code> is
+terminated when it exits the <code class="docutils literal notranslate"><span class="pre">System</span></code>.</p>
+</section>
+</section>
+<section id="illuminator">
+<h3>Illuminator<a class="headerlink" href="#illuminator" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Illumination</span></code> objects are simply sampler wrappers. They provide an easy API to automate the sampling of illumination
+photons from user defined functions. When added to a system, they can be used to obtain spatially distributed <code class="docutils literal notranslate"><span class="pre">Photon</span></code>
+objects. They are always placed into systems centered at the (0, 0, 0). transparent media can be stacked beneath this to
+effectively change the starting point.</p>
+</section>
+<section id="detector">
+<h3>Detector<a class="headerlink" href="#detector" title="Link to this heading"></a></h3>
+<p>Similar to <code class="docutils literal notranslate"><span class="pre">Illuminator</span></code> objects, <code class="docutils literal notranslate"><span class="pre">Detector</span></code> objects are wrappers for user defined functions. These are boolean-based
+and return whether a location and, optionally, direction would be detected. The object automatically counts how the
+weight queried and the weight detected. If not weight is input when the <code class="docutils literal notranslate"><span class="pre">Detector</span></code> is queried, then it is assumed to be
+unity. At any time, counts can be reset with the <code class="docutils literal notranslate"><span class="pre">reset()</span></code> method. This is useful to allow the same object to be used
+in iterative simulations, such as when creating a lookup table.</p>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">Illuminator</span></code> objects, <code class="docutils literal notranslate"><span class="pre">Detector</span></code> objects must include a z coordinate when stacked into a system. They will be
+centered at (0, 0, z). The user-defined detection pattern can be used to offset the detection in the x and y directions.
+By using multiple detector objects with different offsets, a detector array can be created to spatially resolve photon
+detection even further.</p>
+</section>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Python 3.12 (others may work, untested)</p></li>
+<li><p>Numpy/Cupy</p></li>
+<li><p>Pandas</p></li>
+<li><p>Scipy</p></li>
+<li><p>Matplotlib</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<section id="basic-install">
+<h3>Basic Install<a class="headerlink" href="#basic-install" title="Link to this heading"></a></h3>
+<p>To install the project and its dependencies, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>photon-canon
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong><em>NOTE:</em></strong> By default, <code class="docutils literal notranslate"><span class="pre">pip</span></code> will not install <code class="docutils literal notranslate"><span class="pre">cupy</span></code>. On systems without a CUDA-GPU, this is the desired behavior,
+but you will receive an import warning when using this package. IF you have a compatible GPU, see below for CUDA
+options.</p>
+</div></blockquote>
+</section>
+<section id="cuda-systems">
+<h3>CUDA Systems<a class="headerlink" href="#cuda-systems" title="Link to this heading"></a></h3>
+<p>If you have a compatible GPU, you can run <code class="docutils literal notranslate"><span class="pre">photon-canon</span></code> with <code class="docutils literal notranslate"><span class="pre">cupy</span></code> asa drop-in for numpy. If you already have cupy
+installed, this will be the default behavior. If not, you can install it with <code class="docutils literal notranslate"><span class="pre">photon-canon</span></code> by calling the optional
+dependencies for CUDA as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;photon-canon[cuda]&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<p>Documentation is available in the <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory, auto-generated from docstrings with <code class="docutils literal notranslate"><span class="pre">sphinx</span></code>. To browse the documentation, either vie/generate the PDF from latex (if one is not available, run <code class="docutils literal notranslate"><span class="pre">pdflatex</span> <span class="pre">photon_canon.tex</span></code> from the <code class="docutils literal notranslate"><span class="pre">latex</span></code> directory with a machine with $\LaTeX$ installed ) or serve the <code class="docutils literal notranslate"><span class="pre">html</span></code> locally. To do this, run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">http.server</span> <span class="pre">8000</span></code> from the <code class="docutils literal notranslate"><span class="pre">html</span></code> directory and navigate to <code class="docutils literal notranslate"><span class="pre">localhost:8000</span></code> in a browser.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/photon_canon.utils.html" class="btn btn-neutral float-left" title="photon_canon.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

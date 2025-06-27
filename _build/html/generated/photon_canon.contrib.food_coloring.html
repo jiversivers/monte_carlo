@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photon_canon.contrib.food_coloring &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="photon_canon.hardware" href="photon_canon.hardware.html" />
+    <link rel="prev" title="photon_canon.contrib.diffusion_theory" href="photon_canon.contrib.diffusion_theory.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.bio.html">photon_canon.contrib.bio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.diffusion_theory.html">photon_canon.contrib.diffusion_theory</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">photon_canon.contrib.food_coloring</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.food_coloring.make_mix"><code class="docutils literal notranslate"><span class="pre">make_mix()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Photon Canon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.bio.html">photon_canon.contrib.bio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="photon_canon.contrib.diffusion_theory.html">photon_canon.contrib.diffusion_theory</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">photon_canon.contrib.food_coloring</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#photon_canon.contrib.food_coloring.make_mix"><code class="docutils literal notranslate"><span class="pre">make_mix()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.utils.html">photon_canon.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.html">photon_canon</a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+      <li class="breadcrumb-item active">photon_canon.contrib.food_coloring</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/photon_canon.contrib.food_coloring.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-photon_canon.contrib.food_coloring">
+<span id="photon-canon-contrib-food-coloring"></span><h1>photon_canon.contrib.food_coloring<a class="headerlink" href="#module-photon_canon.contrib.food_coloring" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.contrib.food_coloring.make_mix" title="photon_canon.contrib.food_coloring.make_mix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_mix</span></code></a>([wavelengths, red, yellow, green, ...])</p></td>
+<td><p>Generate a synthetic <strong>absorbance spectrum</strong> for an arbitrary mixture of food-coloring dyes (or their premixed stocks) by linear super- position of reference spectra.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.contrib.food_coloring.make_mix">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.contrib.food_coloring.</span></span><span class="sig-name descname"><span class="pre">make_mix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">red</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yellow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">green</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.contrib.food_coloring.make_mix" title="Link to this definition"></a></dt>
+<dd><p>Generate a synthetic <strong>absorbance spectrum</strong> for an arbitrary mixture
+of food-coloring dyes (or their premixed stocks) by linear super-
+position of reference spectra.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">type wavelengths<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+<dt class="field-even">param wavelengths<span class="colon">:</span></dt>
+<dd class="field-even"><p>1-D array of wavelengths <span class="math notranslate nohighlight">\(\lambda\;[\text{nm}]\)</span> at which the spectrum should be returned.
+If <em>None</em> (default), the function returns values on the native sampling grid contained in the reference files.</p>
+</dd>
+<dt class="field-odd">type wavelengths<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray, optional</p>
+</dd>
+<dt class="field-even">type red<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">param red<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Concentrations (in <strong>µL dye / mL solution</strong>) of the red stock dyes to mix. Keyword only.</p>
+</dd>
+<dt class="field-even">type red<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">type yellow<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">param yellow<span class="colon">:</span></dt>
+<dd class="field-even"><p>Concentrations (in <strong>µL dye / mL solution</strong>) of the yello stock dyes to mix. Keyword only.</p>
+</dd>
+<dt class="field-odd">type yellow<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional</p>
+</dd>
+<dt class="field-even">type green<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">param green<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Concentrations (in <strong>µL dye / mL solution</strong>) of the green stock dyes to mix. Keyword only.</p>
+</dd>
+<dt class="field-even">type green<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">type blue<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">param blue<span class="colon">:</span></dt>
+<dd class="field-even"><p>Concentrations (in <strong>µL dye / mL solution</strong>) of the blue stock dyes to mix. Keyword only.</p>
+</dd>
+<dt class="field-odd">type blue<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional</p>
+</dd>
+<dt class="field-even">type stock_a<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">param stock_a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Concentrations (µL/mL) of premixed <em>Stock A</em> to mix. Keyword only.</p>
+</dd>
+<dt class="field-even">type stock_a<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">type stock_b<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">param stock_b<span class="colon">:</span></dt>
+<dd class="field-even"><p>Concentrations (µL/mL) of premixed <em>Stock B</em> to mix. Keyword only.</p>
+</dd>
+<dt class="field-odd">type stock_b<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{Stock A}=0.125\,\text{mL/mL red}
++ 0.175\,\text{mL/mL green}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{Stock B}=0.600\,\text{mL/mL yellow}
++ 0.050\,\text{mL/mL blue}\)</span></p></li>
+</ul>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Absorbance spectrum <span class="math notranslate nohighlight">\(A(\lambda)\)</span> with the same length and ordering as <em>wavelengths</em> (or the native grid).</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray[float]</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<p>The mixture obeys the Beer–Lambert law, so absorbances <strong>add
+linearly</strong>:</p>
+<div class="math notranslate nohighlight">
+\[A(\lambda) \;=\;
+\sum_{i} c_i\,a_i(\lambda),\]</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(a_i(\lambda)\)</span> is the <em>per-unit</em> absorbance spectrum of dye
+<em>i</em> (1 µL / mL reference), and</p></li>
+<li><p><span class="math notranslate nohighlight">\(c_i\)</span> is the requested concentration (µL/mL).</p></li>
+</ul>
+<p>The premixed stocks are treated exactly the same way, using their
+own per-unit spectra.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># 0.2 µL/mL red + 0.1 µL/mL blue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">make_mix</span><span class="p">(</span><span class="n">red</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">blue</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(401,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Integrated optical density between 400–700 nm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">301</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">make_mix</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">stock_a</span><span class="o">=</span><span class="mf">0.05</span><span class="p">),</span> <span class="n">wl</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A_int</span>
+<span class="go">12.3</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="photon_canon.contrib.diffusion_theory.html" class="btn btn-neutral float-left" title="photon_canon.contrib.diffusion_theory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="photon_canon.hardware.html" class="btn btn-neutral float-right" title="photon_canon.hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

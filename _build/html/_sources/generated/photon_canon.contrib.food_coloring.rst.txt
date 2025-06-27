@@ -1,0 +1,12 @@
+photon\_canon.contrib.food\_coloring
+====================================
+
+.. automodule:: photon_canon.contrib.food_coloring
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      make_mix
+   

@@ -1,0 +1,15 @@
+photon\_canon.contrib
+=====================
+
+.. automodule:: photon_canon.contrib
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   bio
+   diffusion_theory
+   food_coloring

@@ -1,0 +1,16 @@
+photon\_canon.contrib.diffusion\_theory
+=======================================
+
+.. automodule:: photon_canon.contrib.diffusion_theory
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_diffusion_approximation
+      create_integrated_diffusion_approximation
+      cylindrical_distance
+      diffusion_approximation
+      fresnel_equation
+   

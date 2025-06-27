@@ -1,0 +1,14 @@
+photon\_canon.lut
+=================
+
+.. automodule:: photon_canon.lut
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   lut
+   utils

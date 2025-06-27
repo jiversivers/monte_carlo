@@ -1,0 +1,23 @@
+photon\_canon.contrib.bio
+=========================
+
+.. automodule:: photon_canon.contrib.bio
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      calculate_mus
+      hemoglobin_mus
+      inverse_power_law_for_reduced_scattering
+      model_from_hemoglobin
+      spectroscopic_model_of_absorption
+      validate_concentrations_and_spectra
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ConcentrationError
+   

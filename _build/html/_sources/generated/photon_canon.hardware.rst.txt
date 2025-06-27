@@ -1,0 +1,19 @@
+photon\_canon.hardware
+======================
+
+.. automodule:: photon_canon.hardware
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      cone_of_acceptance
+      create_cone_of_acceptance
+      create_hollow_cone_beam
+      create_oblique_beams
+      hollow_cone_beam
+      oblique_beams
+      pencil_beams
+      total_acceptor
+   

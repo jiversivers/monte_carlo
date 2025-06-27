@@ -1,0 +1,247 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photon_canon.utils &mdash; Photon Canon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Photon Canon" href="../README.html" />
+    <link rel="prev" title="photon_canon.optics" href="photon_canon.optics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Photon Canon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.OpticalPropertyError"><code class="docutils literal notranslate"><span class="pre">OpticalPropertyError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.model_reflectance"><code class="docutils literal notranslate"><span class="pre">model_reflectance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.sample_spectrum"><code class="docutils literal notranslate"><span class="pre">sample_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.simulate"><code class="docutils literal notranslate"><span class="pre">simulate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Photon Canon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="photon_canon.html">photon_canon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.contrib.html">photon_canon.contrib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.hardware.html">photon_canon.hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.import_utils.html">photon_canon.import_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.lut.html">photon_canon.lut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photon_canon.optics.html">photon_canon.optics</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">photon_canon.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.OpticalPropertyError"><code class="docutils literal notranslate"><span class="pre">OpticalPropertyError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.model_reflectance"><code class="docutils literal notranslate"><span class="pre">model_reflectance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.sample_spectrum"><code class="docutils literal notranslate"><span class="pre">sample_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photon_canon.utils.simulate"><code class="docutils literal notranslate"><span class="pre">simulate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Photon Canon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="photon_canon.html">photon_canon</a></li>
+      <li class="breadcrumb-item active">photon_canon.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/photon_canon.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-photon_canon.utils">
+<span id="photon-canon-utils"></span><h1>photon_canon.utils<a class="headerlink" href="#module-photon_canon.utils" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.utils.model_reflectance" title="photon_canon.utils.model_reflectance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_reflectance</span></code></a>(model, mu_s, mu_a[, vectorize])</p></td>
+<td><p>Generalizes reflectance modeling by applying a provided model function to arrays of scattering and absorption coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.utils.sample_spectrum" title="photon_canon.utils.sample_spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_spectrum</span></code></a>(wavelengths, spectrum)</p></td>
+<td><p>Samples a wavelength from a spectral probability distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.utils.simulate" title="photon_canon.utils.simulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate</span></code></a>(system, n, **kwargs)</p></td>
+<td><p>Runs a Monte Carlo simulation using the provided system configuration and number of photons.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Exceptions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.utils.OpticalPropertyError" title="photon_canon.utils.OpticalPropertyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpticalPropertyError</span></code></a>([message, stashed])</p></td>
+<td><p>Custom exception raised when invalid or undefined optical properties are encountered.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py exception">
+<dt class="sig sig-object py" id="photon_canon.utils.OpticalPropertyError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.utils.</span></span><span class="sig-name descname"><span class="pre">OpticalPropertyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Optical</span> <span class="pre">Property</span> <span class="pre">Error!'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stashed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.utils.OpticalPropertyError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Custom exception raised when invalid or undefined optical properties are encountered.</p>
+<p>This can be used to signal errors related to scattering or absorption values, LUT mismatches,
+or other property-related modeling issues.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.utils.model_reflectance">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.utils.</span></span><span class="sig-name descname"><span class="pre">model_reflectance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.utils.model_reflectance" title="Link to this definition"></a></dt>
+<dd><p>Generalizes reflectance modeling by applying a provided model function to arrays of scattering and absorption coefficients.</p>
+<p>This function computes modeled reflectance based on the given <cite>model</cite>, scattering coefficients (<cite>mu_s</cite>),
+and absorption coefficients (<cite>mu_a</cite>). If <cite>vectorize</cite> is set to True, the function assumes that the model
+supports vectorized input and calls it once for all values. Otherwise, it loops through each pair
+of (<cite>mu_s</cite>, <cite>mu_a</cite>) values and computes the reflectance individually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Callable</em><em>[</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>...</em><em>]</em><em>, </em><em>Union</em><em>[</em><em>float</em><em>, </em><em>np.ndarray</em><em>]</em><em>]</em>) – A function that accepts <cite>mu_s</cite>, <cite>mu_a</cite>, and optional keyword arguments to return reflectance.
+Must return either a float or a NumPy array.</p></li>
+<li><p><strong>mu_s</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>]</em>) – An array of scattering coefficients, μs.</p></li>
+<li><p><strong>mu_a</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>]</em>) – An array of absorption coefficients, μa.</p></li>
+<li><p><strong>vectorize</strong> (<em>bool</em>) – Whether to evaluate the model in a vectorized fashion. If False, uses a loop.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Additional keyword arguments to pass to the model function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of modeled reflectance values corresponding to each (<cite>mu_s</cite>, <cite>mu_a</cite>) pair.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.utils.sample_spectrum">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.utils.</span></span><span class="sig-name descname"><span class="pre">sample_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.utils.sample_spectrum" title="Link to this definition"></a></dt>
+<dd><p>Samples a wavelength from a spectral probability distribution.</p>
+<p>The function normalizes the input spectrum to form a probability density function (PDF),
+computes the cumulative distribution function (CDF), and uses inverse transform sampling
+to randomly select a wavelength based on the distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wavelengths</strong> (<em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Array-like list of wavelengths.</p></li>
+<li><p><strong>spectrum</strong> (<em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Array-like list of spectral intensities or probabilities corresponding to the wavelengths.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single sampled wavelength based on the input spectrum.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_canon.utils.simulate">
+<span class="sig-prename descclassname"><span class="pre">photon_canon.utils.</span></span><span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.utils.simulate" title="Link to this definition"></a></dt>
+<dd><p>Runs a Monte Carlo simulation using the provided system configuration and number of photons.</p>
+<p>The simulation is executed on a <cite>System</cite> object, which models beam propagation and optical interactions.
+Results include the transmittance (T), reflectance (R), and absorption (A) coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>system</strong> (<a class="reference internal" href="photon_canon.optics.html#photon_canon.optics.System" title="photon_canon.optics.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">photon_canon.optics.System</span></code></a>) – The optical system object capable of simulating photon transport.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of photons to simulate.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Additional keyword arguments passed to <cite>system.beam()</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing transmittance (T), reflectance (R), and absorption (A).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[float, float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="photon_canon.optics.html" class="btn btn-neutral float-left" title="photon_canon.optics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../README.html" class="btn btn-neutral float-right" title="Photon Canon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jiversivers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+﻿photon\_canon
+=============
+
+.. automodule:: photon_canon
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   contrib
+   hardware
+   import_utils
+   lut
+   optics
+   utils

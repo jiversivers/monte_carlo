@@ -1,0 +1,20 @@
+photon\_canon.utils
+===================
+
+.. automodule:: photon_canon.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      model_reflectance
+      sample_spectrum
+      simulate
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      OpticalPropertyError
+   
