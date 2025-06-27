@@ -57,35 +57,38 @@ def make_mix(
     stock_a: float = 0,
     stock_b: float = 0
 ) -> np.ndarray[float]:
-    """
+    r"""
     Generate a synthetic **absorbance spectrum** for an arbitrary mixture
     of food-coloring dyes (or their premixed stocks) by linear super-
     position of reference spectra.
 
     Parameters
     ----------
-    wavelengths : ndarray, optional
-        1-D array of wavelengths :math:`\lambda\;[\text{nm}]` at which
-        the spectrum should be returned.  If *None* (default), the
-        function returns values on the native sampling grid contained in
-        the reference files.
-    red, yellow, green, blue : float, keyword-only
-        Concentrations (in **µL dye / mL solution**) of the individual
-        stock dyes to mix.
-    stock_a, stock_b : float, keyword-only
-        Concentrations (µL/mL) of premixed *Stock A* and *Stock B*,
-        where
+    :param wavelengths: 1-D array of wavelengths :math:`\lambda\;[\text{nm}]` at which the spectrum should be returned.
+        If *None* (default), the function returns values on the native sampling grid contained in the reference files.
+    :type wavelengths: ndarray, optional
+    :param red: Concentrations (in **µL dye / mL solution**) of the red stock dyes to mix. Keyword only.
+    :type red: float, optional
+    :param yellow: Concentrations (in **µL dye / mL solution**) of the yello stock dyes to mix. Keyword only.
+    :type yellow: float, optional
+    :param green: Concentrations (in **µL dye / mL solution**) of the green stock dyes to mix. Keyword only.
+    :type green: float, optional
+    :param blue: Concentrations (in **µL dye / mL solution**) of the blue stock dyes to mix. Keyword only.
+    :type blue: float, optional
+    :param stock_a: Concentrations (µL/mL) of premixed *Stock A* to mix. Keyword only.
+    :type stock_a: float, optional
+    :param stock_b: Concentrations (µL/mL) of premixed *Stock B* to mix. Keyword only.
+    :type stock_b: float, optional
 
-        * :math:`\text{Stock A}=0.125\,\text{mL/mL red}
-          + 0.175\,\text{mL/mL green}`
-        * :math:`\text{Stock B}=0.600\,\text{mL/mL yellow}
-          + 0.050\,\text{mL/mL blue}`
+    * :math:`\text{Stock A}=0.125\,\text{mL/mL red}
+      + 0.175\,\text{mL/mL green}`
+    * :math:`\text{Stock B}=0.600\,\text{mL/mL yellow}
+      + 0.050\,\text{mL/mL blue}`
 
     Returns
     -------
-    ndarray
-        Absorbance spectrum :math:`A(\lambda)` with the same length and
-        ordering as *wavelengths* (or the native grid).
+    :return: Absorbance spectrum :math:`A(\lambda)` with the same length and ordering as *wavelengths* (or the native grid).
+    :rtype: np.ndarray[float]
 
     Notes
     -----

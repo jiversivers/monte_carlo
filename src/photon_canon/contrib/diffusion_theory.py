@@ -7,12 +7,13 @@ from ..import_utils import np
 
 
 def fresnel_equation(alpha_i: float = 0, n_rel: float = 1) -> float:
-    """Fresnel equation for specular reflection, :ref:`FresnelEquation`,
+    r"""Fresnel equation for specular reflection,
+
     .. math:
+
         R_s = | \frac{n_1\cos\theta_i - n_2\cos\theta_t}{n_1\cos\theta_i + n_2\cos\theta_t} |
         R_p = | \frac{n_1\cos\theta_t - n_2\cos\theta_i}{n_1\cos\theta_t + n_2\cos\theta_i} |
         R = \frac{R_s + R_p}{2}
-        :label: FresnelEquation
 
     :param alpha_i: Incident angle
     :type alpha_i: float
@@ -43,10 +44,11 @@ def fresnel_equation(alpha_i: float = 0, n_rel: float = 1) -> float:
 def cylindrical_distance(
     rtz: Tuple[float, float, float], rtz_prime: Tuple[float, float, float]
 ) -> float:
-    """Calculate the distance between two cylindrical points, :ref:`CylindricalDistance`
+    r"""Calculate the distance between two cylindrical points as
+
     .. math:
+
         d = \sqrt{\left( \rho - \rho'\right) ^ 2 + \rho\rho'\cos\left( \theta - theta'\right) + \left( z - z'\right) ^ 2}
-        :label: CylindricalDistance
 
     :param rtz: The three cylindrical coordinates (ρ, φ, z) of a point P
     :type rtz: Tuple[float, float, float]
@@ -72,7 +74,8 @@ def diffusion_approximation(
     n_rel: float = 1.33,
     g: float = 0.9,
 ) -> float:
-    """Calculate the **steady-state diffuse reflectance** :math:`R_d(r)`
+    # Reduced scattering coefficient
+    r"""Calculate the **steady-state diffuse reflectance** :math:`R_d(r)`
     predicted by the diffusion approximation for a semi-infinite,
     homogeneous medium illuminated at its surface.
 
@@ -80,28 +83,20 @@ def diffusion_approximation(
     accounts for oblique illumination by adjusting the effective
     source depth and radial offset.
 
-    Parameters
-    ----------
-    mu_s : float
-        Scattering coefficient :math:`\mu_s\;[\text{mm}^{-1}]`.
-    mu_a : float
-        Absorption coefficient :math:`\mu_a\;[\text{mm}^{-1}]`.
-    r : float, optional
-        Radial distance on the surface where :math:`R_d` is evaluated
-        (in mm). Default is ``1``.
-    alpha_i : float, optional
-        Angle of incidence of the source in **radians**
-        (``0`` = normal incidence). Default is ``0``.
-    n_rel : float, optional
-        Relative refractive index :math:`n_2/n_1`
-        (tissue / external medium). Default is ``1.33``.
-    g : float, optional
-        Scattering anisotropy factor. Default is ``0.9``.
-
-    Returns
-    -------
-    float
-        Diffuse reflectance :math:`R_d(r)`.
+    :param mu_s: Scattering coefficient :math:`\mu_s\;[\text{mm}^{-1}]`.
+    :type mu_s: float
+    :param mu_a: Absorption coefficient :math:`\mu_a\;[\text{mm}^{-1}]`.
+    :type mu_a: float
+    :param r: Radial distance on the surface where :math:`R_d` is evaluated (in mm). Default is ``1``.
+    :type r: float, optional
+    :param alpha_i: Angle of incidence of the source in **radians** (``0`` = normal incidence). Default is ``0``.
+    :type alpha_i: float, optional
+    :param n_rel: Relative refractive index :math:`n_2/n_1` (tissue / external medium). Default is ``1.33``.
+    :type n_rel: float, optional
+    :param g: Scattering anisotropy factor. Default is ``0.9``.
+    :type g: float, optional
+    :return: Diffuse reflectance :math:`R_d(r)`.
+    :rtype: float
 
     Notes
     -----
@@ -151,7 +146,6 @@ def diffusion_approximation(
        *Optical properties of biological tissues: a review.*
        Physics in Medicine & Biology **58** (2013) R37–R61.
     """
-    # Reduced scattering coefficient
     mu_s_prime = (1 - g) * mu_s
 
     # Transport coefficient
@@ -256,7 +250,7 @@ def create_integrated_diffusion_approximation(
     n_rel: float = 1.33,
     g: float = 0.9,
 ) -> Callable[[float, float], float]:
-    """
+    r"""
     Build a callable that returns the **radially integrated diffuse
     reflectance**
 
@@ -268,7 +262,7 @@ def create_integrated_diffusion_approximation(
         r \, R_d\!\bigl(r;\mu_s,\mu_a\bigr)\;dr,
 
     where :math:`R_d(r;\mu_s,\mu_a)` is the spatially resolved
-    reflectance given by :pyfunc:`diffusion_approximation`.
+    reflectance given by :py:func:`diffusion_approximation`.
 
     Parameters
     ----------
@@ -288,7 +282,7 @@ def create_integrated_diffusion_approximation(
     Callable[[float, float], float]
         A function ``f(mu_s, mu_a)`` that evaluates
         :math:`\tilde{R}_d(\mu_s,\mu_a)` using
-        :pyfunc:`scipy.integrate.quad`.
+        :py:func:`scipy.integrate.quad`.
 
     Notes
     -----
@@ -309,7 +303,7 @@ def create_integrated_diffusion_approximation(
         \int_{r_{\min}}^{r_{\max}} f(r,\mu_s,\mu_a)\;dr.
 
     The numerical integration is performed with adaptive quadrature
-    (:pyfunc:`scipy.integrate.quad`).
+    (:py:func:`scipy.integrate.quad`).
 
     See Also
     --------

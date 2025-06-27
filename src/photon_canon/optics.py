@@ -26,7 +26,7 @@ mu_s, mu_a, wl = calculate_mus()
 
 
 class Medium(BaseModel):
-    """
+    r"""
     Container for the *optical properties* of a homogeneous layer (:math:`n, \mu_s, \mu_a, g`) optionally specified as
     functions of wavelength.
 
@@ -195,12 +195,12 @@ class Medium(BaseModel):
 
     @property
     def mu_t(self):
-        """Transport coefficient: :math:`\mu_t = \mu_s + \mu_a`"""
+        r"""Transport coefficient: :math:`\mu_t = \mu_s + \mu_a`"""
         return self.mu_s + self.mu_a
 
     @property
     def albedo(self):
-        """Transpot albedo: :math:`a = \frac{\mu_a}{\mu_t}`"""
+        r"""Transpot albedo: :math:`a = \frac{\mu_a}{\mu_t}`"""
         if self.mu_t == 0:
             return 0
         else:
@@ -223,13 +223,13 @@ class Illumination:
         * ``dir`` – Directional cosines *(N × 3)*.
 
         If omitted, the default is a hollow-cone beam created by
-        :pyfunc:`create_hollow_cone_beam`.
+        :py:func:`create_hollow_cone_beam`.
     :type  pattern: Callable[[int], Tuple[numpy.ndarray, numpy.ndarray]]
     :param spectrum: Iterable of *relative* intensities sampled at the
         global wavelength grid ``wl``.  If *None*, photons are
         initialised without a wavelength (i.e. monochromatic).
     :type  spectrum: Iterable[float] | None
-    :param desc: Human-readable description used by :pyattr:`desc`.
+    :param desc: Human-readable description used by :py:attr:`desc`.
     :type  desc: str | None
 
     :ivar pattern: The sampling function supplied at construction time.
@@ -296,8 +296,8 @@ class Detector:
 
     The detector maintains two running counters:
 
-    * :pyattr:`n_total`    – total weight of photons presented.
-    * :pyattr:`n_detected` – weight of photons whose exit positions and
+    * :py:attr:`n_total`    – total weight of photons presented.
+    * :py:attr:`n_detected` – weight of photons whose exit positions and
       directions satisfy the acceptance criterion.
 
     :param acceptor: Callable that decides if a photon hits the detector.
@@ -308,7 +308,7 @@ class Detector:
 
         Must return a Boolean array of the same length.
         The default is an aperture defined by
-        :pyfunc:`create_cone_of_acceptance`.
+        :py:func:`create_cone_of_acceptance`.
     :type  acceptor: Callable[[numpy.ndarray, numpy.ndarray], numpy.ndarray]
     :param desc: Optional description string.
     :type  desc: str | None
@@ -318,7 +318,7 @@ class Detector:
     :ivar acceptor: Acceptance function provided at construction.
     :ivar description: Raw description string.
 
-    :raises ValueError: If :pyfunc:`__call__` is invoked with an object
+    :raises ValueError: If :py:func:`__call__` is invoked with an object
         that is not a :class:`~photon_canon.optics.Photon`.
 
     .. rubric:: Usage example
@@ -347,13 +347,13 @@ class Detector:
     ) -> None:
         """Determine if a photon is detected according to the detector function. Adds the weighted photon to the count
             if detected.
+
         :param location: Location of photon to detect.
         :type location: Iterable[float]
         :param direction: Direction of photon to detect.
         :type direction: float | Iterable[float]
         :param weights: Weights of photons to detect.
         :type weights: float | Iterable[float]
-
         """
         weights = weights if weights is not None else 1
         self.n_total += np.nansum(weights)
@@ -363,7 +363,7 @@ class Detector:
         self.n_detected += np.nansum(weights[accepted_mask])
 
     def __call__(
-        self, photon: Photon, mask: Optional[NDArray[np.bool_]] = True
+        self, photon: Photon, mask: Optional[NDArray[bool]] = True
     ) -> None:
         """Callable interface for detection. See :py:meth:`detect`."""
         if not isinstance(photon, Photon):
@@ -571,14 +571,16 @@ class System:
         ### Process
         1. Get the z-coordinate from the input
         2. Check it against boundaries of each medium of the system until it is found that either:
-            - It is between any of the boundaries, it is in the medium within those boundaries
-            - It is at a boundary, it is "in" the two mediums that make up that interfaces
+
+            * It is between any of the boundaries, it is in the medium within those boundaries
+            * It is at a boundary, it is "in" the two mediums that make up that interfaces
+
         3. Break and return the medium(s) of the queried point.
 
         :param location: The coordinates or z-coordinate to query.
         :type location: tuple, list, ndarray, float, or int
-        :return in_: The medium of the queried z-coordinate or a tuple of interfaces if the coordinate is at an interfaces
-        :rtype in_: medium | tuple of medium
+        :return `in_`: The medium of the queried z-coordinate or a tuple of interfaces if the coordinate is at an interfaces
+        :rtype `in_`: medium | tuple of medium
         """
         location = np.asarray(location)
         z = location if np.ndim(location) == 1 else np.asarray(location)[:, 2]
@@ -610,8 +612,7 @@ class System:
     def interface_crossed(
         self, location0: Iterable[float], location1: Iterable[float]
     ) -> Tuple[Medium | (), float | None]:
-        """
-        Determines the first interfaces crossed when moving between two locations, considering only the z-coordinates.
+        """Determines the first interfaces crossed when moving between two locations, considering only the z-coordinates.
 
         This method checks if any interfaces boundaries lie between the given z-coordinates. If an interfaces is crossed,
         the method calculates its z-location and identifies the two mediums forming the interfaces.
@@ -622,14 +623,15 @@ class System:
         3. Apply a mask to filter boundaries that are actually crossed.
         4. Select the closest crossed boundary as the interfaces plane.
         5. Determine the two mediums making up the interfaces by slightly shifting the plane's z-coordinate:
-           - Backwards (toward the start) to find the first medium.
-           - Forwards (away from the start) to find the second medium.
 
-        - :param location1: Starting location of the query.
-        - :param location2: Ending location of the query.
-        - :return interfaces: (tuple): The two media forming the crossed interfaces, or an empty list `[]` if no
-                              interfaces is crossed.
-        - :return plane: (float or bool): The z-coordinate of the crossed interfaces if one is found, otherwise `False`.
+            * Backwards (toward the start) to find the first medium.
+            * Forwards (away from the start) to find the second medium.
+
+        :param location1: Starting location of the query.
+        :param location2: Ending location of the query.
+        :return: The two media forming the crossed interfaces, or an empty list `[]` if no interfaces is crossed and
+         plane at which the interface is crossed or None.
+        :rtype interfaces: tuple[Medium | (), float | None])
         """
 
         # Get z coords
@@ -729,7 +731,7 @@ class IndexableProperty(np.ndarray):
     values change.
 
     The object behaves like a normal array but keeps an internal flag
-    (:pyattr:`normalize`) that, when *True*, forces the vector(s) to be
+    (:py:attr:`normalize`) that, when *True*, forces the vector(s) to be
     scaled to unit length after every assignment.
 
     :param arr: Initial data used to construct the array.
@@ -738,7 +740,7 @@ class IndexableProperty(np.ndarray):
                       on creation **and** after every in-place update.
     :type  normalize: bool, default ``False``
     :param dtype: NumPy data type to cast *arr* to.  If *None*, the dtype
-                  is inferred by :pyfunc:`numpy.asarray`.
+                  is inferred by :py:func:`numpy.asarray`.
     :type  dtype: numpy.dtype | None
     :returns: A view of ``arr`` as an :class:`IndexableProperty`.
     :rtype: IndexableProperty
@@ -814,15 +816,11 @@ class IndexableProperty(np.ndarray):
 
 # TODO: Make this work with 1 photon the same it does for batches
 class Photon:
-    """
-     Simulated photon (or **batch** of photons) for Monte-Carlo light-transport
-     modelling.
+    """Simulated photon (or **batch** of photons) for Monte-Carlo light-transport modelling.
 
-     The object tracks each photon’s wavelength, position, direction and
-     statistical weight while it propagates through an optical
-     :pyclass:`~photon_canon.optics.System`.  Built-in routines handle
-     movement, scattering, absorption, interface interactions and Russian
-    -roulette termination.
+     The object tracks each photon’s wavelength, position, direction and statistical weight while it propagates through
+      an optical :py:class:`~photon_canon.optics.System`. Built-in routines handle movement, scattering, absorption,
+      interface interactions and Russian-roulette termination.
 
      :ivar int n: Number of photons in the batch.
      :ivar float | Iterable[float] wavelength: Wavelength(s) in nanometres.
@@ -911,7 +909,7 @@ class Photon:
                                       is exceeded.
         :type  throw_recursion_error: bool
         :param keep_secondary_photons: Keep secondary packets in
-                                       :pyattr:`secondary_photons`.
+                                       :py:attr:`secondary_photons`.
         :type  keep_secondary_photons: bool
         :param tir_limit: Maximum number of consecutive TIR events
                           before forced termination.
@@ -949,7 +947,7 @@ class Photon:
 
         # Init empty medium cache and at_interface cache
         self._medium = np.empty((self.batch_size,), dtype=object)
-        self.at_interface = np.empty((self.batch_size,), dtype=np.bool_)
+        self.at_interface = np.empty((self.batch_size,), dtype=bool)
 
         # Exit trackers
         self.exit_direction = np.empty_like(self.directional_cosines)
@@ -1080,7 +1078,7 @@ class Photon:
 
     def copy(self, **kwargs: Any) -> Photon:
         """
-        Creates a deep copy of the Photon object and allows for overwriting specific attributes using **kwargs.
+        Creates a deep copy of the Photon object and allows for overwriting specific attributes using kwargs.
 
         This method creates a new instance of the Photon object with the same attributes as the original. It can also
         overwrite the values of specified attributes using the keyword arguments passed to it. The tracker attributes
@@ -1191,7 +1189,7 @@ class Photon:
         if np.any(rr_check):
             self.russian_roulette(rr_check)
 
-    def russian_roulette(self, mask: NDArray[np.bool_]) -> None:
+    def russian_roulette(self, mask: NDArray[bool]) -> None:
         """
         Determines photon survival using the Russian roulette technique.
 
@@ -1200,7 +1198,7 @@ class Photon:
 
         :param mask: A boolean array where `True` indicates that the corresponding photon is
                      subject to the Russian roulette survival test.
-        :type mask: NDArray[np.bool_]
+        :type mask: NDArray[bool]
         :return: This method modifies photon weights in place and does not return a value.
         :rtype: None
         """
@@ -1250,7 +1248,7 @@ class Photon:
         return self._medium
 
     @property
-    def is_terminated(self) -> np.bool_:
+    def is_terminated(self) -> bool:
         """
         Checks if there are still photons in the batch to simulate.
 
@@ -1258,7 +1256,7 @@ class Photon:
         or met termination criteria). Otherwise, it returns `False`.
 
         :return: A boolean value indicating whether the simulation has completed for all photons.
-        :rtype: np.bool_
+        :rtype: bool
         """
 
         self._is_terminated = np.all(
@@ -1336,7 +1334,7 @@ class Photon:
         self.weights = self.weights - absorbed_weights
 
     def move(self, step: float | Iterable[float] = None) -> None:
-        """Moves the photon one step in its current direction.
+        r"""Moves the photon one step in its current direction.
 
         The size of the step can be either provided directly, or it can be determined by the mean free path of the
         current medium, which is calculated from the transport coefficient (mu_t). If the photon is in a medium with
@@ -1349,7 +1347,7 @@ class Photon:
         the media properties, and its weights is updated (decremented) based on the interaction.
 
         :param step: The distance the photon should move. If not provided, the step size is sampled based on the mean
-        free path, :math:`-\frac{\ln\xi}{\mu_t}`
+         free path, :math:`-\frac{\ln\xi}{\mu_t}`
         :type  step: float | Iterable[float], optional
         :raises ValueError: If *step* is an array of incompatible shape.
         :return: None. The photon's location coordinates and directions are updated.
@@ -1434,7 +1432,7 @@ class Photon:
     def reflect_refract(
         self,
         interfaces: NDArray[object[Tuple[Medium, Medium], Tuple[None]]],
-        mask: NDArray[np.bool_],
+        mask: NDArray[bool],
     ) -> None:
         """
         Computes photon reflection and refraction at interfaces.
@@ -1449,7 +1447,7 @@ class Photon:
                            is present.
         :type interfaces: np.ndarray[object]
         :param mask: Boolean mask indicating which photons to process.
-        :type mask: NDArray[np.bool_]
+        :type mask: NDArray[bool]
         :return: None. The photon's direction and weight are updated along with relevant trackers,
                  and secondary photons are spawned if necessary.
         """

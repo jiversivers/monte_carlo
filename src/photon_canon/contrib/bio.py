@@ -25,13 +25,24 @@ sO2 = 0.5
 
 class ConcentrationError(OpticalPropertyError):
     """Special error for concentration validation b/c it comes up all the time in Jacobian calculations for fitting"""
-
     pass
 
 
 def validate_concentrations_and_spectra(ci, epsilons, wavelength):
-    # Helper function to check if concentrations are valid (non-negative)
-    def check_concentrations_valid(ci):
+    """Helper function to check if concentrations are valid (non-negative)
+
+    :param ci: The concentration of absorbers 1-i. (default: (0.5, 0.5))
+    :type ci: Iterable[Real]
+    :param epsilons: The extinction coefficient for absorbers 1-i (default: Hb and HbO2 absorption).
+    :type epsilons: Iterable[Real]
+    :param wavelength: Array of wavelengths (in nm) at which to compute the values (default: [250, 1000], step 2).
+    :type wavelength: Iterable[Real]
+    :return: None. Raises error if concentrations are invalid.
+    :rtype: None
+    :raises ConcentrationError: if concentrations are invalid
+    """
+
+    def check_concentrations_valid():
         if isinstance(ci, (list, tuple, np.ndarray)):
             if np.any(np.array(ci) < 0):
                 raise ConcentrationError("Concentrations cannot be negative")
@@ -40,7 +51,7 @@ def validate_concentrations_and_spectra(ci, epsilons, wavelength):
                 raise ConcentrationError("Concentrations cannot be negative")
 
     # Check if lengths match for list-like concentrations and epsilons
-    def check_lengths_match(ci, epsilons):
+    def check_lengths_match():
         if isinstance(ci, (list, tuple, np.ndarray)):
             if len(ci) != len(epsilons):
                 raise OpticalPropertyError(
@@ -56,7 +67,7 @@ def validate_concentrations_and_spectra(ci, epsilons, wavelength):
                 )
 
     # Check if wavelengths and epsilons match up
-    def check_wavelength_epsilon_match(wavelength, epsilons):
+    def check_wavelength_epsilon_match():
         msg = f"A spectrum of molar absorptivity must be included with each spectrum. You gave {len(wavelength)} wavelengths but molar absorptivity had {len(epsilons[0])} elements."
         if isinstance(epsilons[0], (list, tuple, np.ndarray)):
             if not all(len(e) == len(wavelength) for e in epsilons):
@@ -74,13 +85,15 @@ def validate_concentrations_and_spectra(ci, epsilons, wavelength):
 def inverse_power_law_for_reduced_scattering(
     a: Real = 1,
     b: Real = 1,
-    wavelength: Union[Real, Iterable[Real]] = wl,
+    wavelength: Union[Real, Iterable[Real]] = None,
     wavelength0: Real = 650,
 ) -> Union[Real, Iterable[Real]]:
-    """Calculate the reduced scatter (μs') using :ref:`InversePowerLawforReducedScattering`.
+    r"""Calculate the reduced scatter (:math:`\mu_s'`) as
+
     .. math::
-        \mu_s' = a\left(\frac{\lambda}{\lambda_0}\right)^-b
-        :label: InversePowerLawforReducedScattering
+
+        \mu_s' = a\left(\frac{\lambda}{\lambda_0}\right)^{-b}
+
 
     :param a: Scattering amplitude for the reduced scattering coefficient (default: 1 cm^-1).
     :type a: Real
@@ -93,6 +106,8 @@ def inverse_power_law_for_reduced_scattering(
     :return: Reduced scattering coefficient
     :rtype: Real
     """
+    if wavelength is None:
+        wavelength = wl
     mu_s = a * (wavelength / wavelength0) ** -b  # Reduced scattering coefficient, cm^-1
     return mu_s
 
@@ -100,13 +115,14 @@ def inverse_power_law_for_reduced_scattering(
 def spectroscopic_model_of_absorption(
     ci: Union[Real, Iterable[Real]] = (tHb * sO2, tHb * (1 - sO2)),
     epsilons: Union[Iterable[Real], Iterable[Iterable[Real]]] = eps,
-    wavelength: Union[Real, Iterable[Real]] = wl,
+    wavelength: Union[Real, Iterable[Real]] = None,
     force_feasible: bool = False,
 ) -> Union[Real, Iterable[Real]]:
-    """Calculate the absorption coefficient (μa) using :ref:`SpectroscopicModelOfAbsorption`.
+    """Calculate the absorption coefficient (:math:`\mu_a`) as
+
     .. math::
+
         \mu_a = \sum_i\epsilon_iC_i
-        :label: SpectroscopicModelOfAbsorption
 
     :param ci: The concentration of absorbers 1-i. (default: (0.5, 0.5))
     :type ci: Iterable[Real]
@@ -119,6 +135,8 @@ def spectroscopic_model_of_absorption(
     :return: Absorption coefficient of mixture of absorber at input wavelengths.
     :rtype: Iterable[Real]
     """
+    if wavelength is None:
+        wavelength = wl
 
     # Check cs and epsilons match up and are feasible
     try:
@@ -154,7 +172,7 @@ def calculate_mus(
     b: Real = 1,
     ci: Union[Real, Iterable[Real]] = (tHb * sO2, tHb * (1 - sO2)),
     epsilons: Union[Iterable[Real], Iterable[Iterable[Real]]] = eps,
-    wavelength: Union[Real, Iterable[Real]] = wl,
+    wavelength: Union[Real, Iterable[Real]] = None,
     wavelength0: Real = 650,
     force_feasible: bool = True,
 ) -> Union[Tuple[Real, Real, Real], Tuple[NDArray, NDArray, NDArray]]:
@@ -182,6 +200,8 @@ def calculate_mus(
     :return: Reduced scattering coefficient and absorption coefficient.
     :rtype: Tuple[NDArray, NDArray, NDArray]
     """
+    if wavelength is None:
+        wavelength = wl
 
     # Array everything as needed
     wavelength = np.asarray(wavelength)  # Wavelengths of measurements (nm)
@@ -200,7 +220,7 @@ def hemoglobin_mus(
     b: Real = 1,
     t: Real = tHb,
     s: Real = sO2,
-    wavelengths: Iterable[Real] = wl,
+    wavelengths: Iterable[Real] = None,
     force_feasible: bool = True,
 ) -> Union[Tuple[Real, Real, Real], Tuple[NDArray, NDArray, NDArray]]:
     """
@@ -208,8 +228,7 @@ def hemoglobin_mus(
     based on given absorption coefficients of oxyhemoglobin (HbO2) and deoxyhemoglobin (Hb). See :py:func:`calculate_mus`
     for more details.
 
-    Default values are supplied via `Scott Prahl's publically available data`_
-    .. _Scott Prahl's publically available data: https://omlc.org/spectra/hemoglobin/summary.html
+    Default values are supplied via Scott Prahl at https://omlc.org/spectra/hemoglobin/summary.html
 
     This function interpolates the extinction coefficients of HbO2 and Hb
     at specified wavelengths using cubic interpolation and calculates the
@@ -240,6 +259,8 @@ def hemoglobin_mus(
         - Extrapolation is used for wavelengths outside the dataset range.
         - The calculation assumes a power-law dependence on wavelength for scattering.
     """
+    if wavelengths is None:
+        wavelengths = wl
     hbo2_interp = interp1d(wl, eps[0], kind="cubic", fill_value="extrapolate")
     dhb_interp = interp1d(wl, eps[1], kind="cubic", fill_value="extrapolate")
     epsilons = (hbo2_interp(wavelengths), dhb_interp(wavelengths))
@@ -258,7 +279,7 @@ def model_from_hemoglobin(
     s: np.ndarray[float],
     **kwargs
 ) -> np.ndarray[float]:
-    """Forwarding function to streamline Hb/sO2 modelling. This function takes biological parameters and turns them
+    """Forwarding function to streamline :math:`\mathrm{[tHb]\,\&\,\mathrm{sO_2}` modelling. This function takes biological parameters and turns them
     optical properties, then forwards those to model reflectance and returns that reflectance. In short, biological
     properties get converted to reflectance using the given model. See :py:func:`hemoglobin_mus` and
     :py:func:`calculate_mus` for more details.

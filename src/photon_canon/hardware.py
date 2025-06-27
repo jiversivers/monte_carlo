@@ -194,7 +194,7 @@ def create_oblique_beams(
 # Stand-in detector for all queried
 def total_acceptor(
     x: float, y: float, mu_z: Optional[float] = None
-) -> NDArray[np.bool_]:
+) -> NDArray[bool]:
     """
     Detector function that accepts all reflected photons unconditionally.
 
@@ -205,9 +205,9 @@ def total_acceptor(
     :param mu_z: Optional z-direction cosine(s); ignored.
     :type mu_z: Optional[float]
     :return: Boolean mask indicating all photons are accepted.
-    :rtype: NDArray[np.bool_]
+    :rtype: NDArray[bool]
     """
-    return np.full_like(x, fill_value=True, dtype=np.bool_)
+    return np.full_like(x, fill_value=True, dtype=bool)
 
 
 def cone_of_acceptance(
@@ -217,7 +217,7 @@ def cone_of_acceptance(
     na: float = NA,
     n: float = 1.33,
     r: float = ID,
-) -> NDArray[np.bool_]:
+) -> NDArray[bool]:
     """
     Detector function that accepts photons based on angle and radial distance.
 
@@ -236,7 +236,7 @@ def cone_of_acceptance(
     :param r: Maximum radial acceptance.
     :type r: float
     :return: Boolean mask indicating which photons are accepted.
-    :rtype: NDArray[np.bool_]
+    :rtype: NDArray[bool]
     """
     x = np.array(x)
     y = np.array(y)
@@ -254,7 +254,7 @@ def cone_of_acceptance(
 def create_cone_of_acceptance(
     r: Real, na: Real = NA, n: Real = 1.33
 ) -> Callable[
-    [Union[Real, Iterable[Real]], Union[Real, Iterable[Real]], ...], NDArray[np.bool_]
+    [Union[Real, Iterable[Real]], Union[Real, Iterable[Real]], ...], NDArray[bool]
 ]:
     """
     Factory function to create a cone-of-acceptance detector function.

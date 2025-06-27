@@ -343,6 +343,7 @@ class LUT(BaseModel):
     def surface(self) -> Tuple[Real, Real, Real]:
         """
         .. _surface:
+
         Get the surface information for the LUT. Returns all unique values of each of the first 2 dimensions and the grid of responses at those dimensions. This allows for quick and easy visualization using ax.plot_wireframe(X, Y, Z). Note, this surface will include smoothing if self.smoothing_fn is not None.
 
         :return: both independent variables and the dependent response surface.

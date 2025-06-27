@@ -1,7 +1,7 @@
 import warnings
 from numbers import Real
 from pathlib import Path
-from typing import Tuple, Iterable, Union, Callable, Any
+from typing import Tuple, Iterable, Union, Callable, Any, Optional
 
 import sqlite3
 
@@ -58,7 +58,7 @@ def simulate(system: "System", n: int, **kwargs) -> Tuple[float, float, float]:
     Results include the transmittance (T), reflectance (R), and absorption (A) coefficients.
 
     :param system: The optical system object capable of simulating photon transport.
-    :type system: System
+    :type system: :py:class:`photon_canon.optics.System`
     :param n: Number of photons to simulate.
     :type n: int
     :param kwargs: Additional keyword arguments passed to `system.beam()`.
