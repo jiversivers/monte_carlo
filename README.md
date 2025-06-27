@@ -7,6 +7,7 @@
 
 - [Project Description](#project-description)
 - [Installation](#installation)
+- [Documentation](#documentation)
 
 ## Project Description
 
@@ -172,3 +173,6 @@ dependencies for CUDA as follows:
 ```bash
 pip install "photon-canon[cuda]"
 ```
+
+## Documentation
+Documentation is available in the `_build` directory, auto-generated from docstrings with `sphinx`. To browse the documentation, either vie/generate the PDF from latex (if one is not available, run `pdflatex photon_canon.tex` from the `latex` directory with a machine with $\LaTeX$ installed ) or serve the `html` locally. To do this, run `python -m http.server 8000` from the `html` directory and navigate to `localhost:8000` in a browser.
