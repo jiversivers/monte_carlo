@@ -252,10 +252,10 @@ def cone_of_acceptance(
 
 
 def create_cone_of_acceptance(
-        r: Real,
-        na: Real = NA,
-        n: Real = 1.33
-) -> Callable[[Union[Real, Iterable[Real]], Union[Real, Iterable[Real]], ...], NDArray[np.bool_]]:
+    r: Real, na: Real = NA, n: Real = 1.33
+) -> Callable[
+    [Union[Real, Iterable[Real]], Union[Real, Iterable[Real]], ...], NDArray[np.bool_]
+]:
     """
     Factory function to create a cone-of-acceptance detector function.
 

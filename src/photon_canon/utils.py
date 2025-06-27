@@ -1,7 +1,7 @@
 import warnings
 from numbers import Real
 from pathlib import Path
-from typing import Tuple, Iterable, Union, Callable
+from typing import Tuple, Iterable, Union, Callable, Any
 
 import sqlite3
 
@@ -14,6 +14,7 @@ db_path = db_dir / "lut.db"
 CON = sqlite3.connect(db_path)
 c = CON.cursor()
 
+
 class OpticalPropertyError(Exception):
     """
     Custom exception raised when invalid or undefined optical properties are encountered.
@@ -21,7 +22,23 @@ class OpticalPropertyError(Exception):
     This can be used to signal errors related to scattering or absorption values, LUT mismatches,
     or other property-related modeling issues.
     """
-    pass
+
+    def __init__(
+        self, message: str = "Optical Property Error!", stashed: Optional[Any] = None
+    ):
+        """
+        :param message: The error message.
+        :param stashed: Any data to stash in the error.
+        """
+        super().__init__(message)
+        self.stashed = stashed
+
+    def __str__(self):
+        base = super().__str__()
+        if self.stashed:
+            return f"{base} | Context: {self.stashed}. Access this data with <exception>.stashed"
+        return base
+
 
 # This block attempts to retrieve the latest simulation ID from the mclut_simulations table.
 # If the table does not exist or the query fails, it sets latest_simulation_id to None and emits a warning.
@@ -105,9 +122,9 @@ def model_reflectance(
     :param model: A function that accepts `mu_s`, `mu_a`, and optional keyword arguments to return reflectance.
                   Must return either a float or a NumPy array.
     :type model: Callable[[float, float, ...], Union[float, np.ndarray]]
-    :param mu_s: An array of scattering coefficients.
+    :param mu_s: An array of scattering coefficients, μs.
     :type mu_s: np.ndarray[float]
-    :param mu_a: An array of absorption coefficients.
+    :param mu_a: An array of absorption coefficients, μa.
     :type mu_a: np.ndarray[float]
     :param vectorize: Whether to evaluate the model in a vectorized fashion. If False, uses a loop.
     :type vectorize: bool

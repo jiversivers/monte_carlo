@@ -177,10 +177,10 @@ def add_simulation_result(
 
     con.commit()
 
+
 def _get_sim_id(
-        obj: Optional["LUT"],
-        simulation_id: int | None,
-        set_default: bool = True) -> int | None:
+    obj: Optional["LUT"], simulation_id: int | None, set_default: bool = True
+) -> int | None:
     """
     Helper function to parse the class/instance method inputs to get the simulation ID.
 
@@ -195,8 +195,10 @@ def _get_sim_id(
     """
     if obj is not None:
         if simulation_id is not None and simulation_id != obj.simulation_id:
-            raise LUTError(f"Input simulation_id ({simulation_id})does not match simulation_id of instance ({obj.simulation_id}). "
-                           "Consider calling as class method with simulation_id argument instead.")
+            raise LUTError(
+                f"Input simulation_id ({simulation_id})does not match simulation_id of instance ({obj.simulation_id}). "
+                "Consider calling as class method with simulation_id argument instead."
+            )
         return simulation_id or obj.simulation_id
 
     elif simulation_id is None and set_default:
