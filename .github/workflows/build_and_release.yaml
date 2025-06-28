@@ -40,7 +40,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install dependencies
-        run: pip install pipreqs toml black sphinx
+        run: pip install pipreqs toml black sphinx sphinx-autodoc-typehints sphinx-rtd-theme myst-parser
 
       - name: Get onto Main
         run: |
