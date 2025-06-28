@@ -159,9 +159,10 @@ To install the project and its dependencies, run the following command:
 pip install photon-canon
 ```
 
- > **_NOTE:_** By default, `pip` will not install `cupy`. On systems without a CUDA-GPU, this is the desired behavior,
-but you will receive an import warning when using this package. IF you have a compatible GPU, see below for CUDA
-options.
+> [!NOTE]
+> By default, `pip` will not install `cupy`. On systems without a CUDA-GPU, this is the desired behavior,
+> but you will receive an import warning when using this package. IF you have a compatible GPU, see below for CUDA
+> options.
 
 
 ### CUDA Systems
