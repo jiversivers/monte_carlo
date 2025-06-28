@@ -8,6 +8,29 @@ on:
       - '*'
 
 jobs:
+  format-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dev deps
+        run: pip install pytest-cov black
+
+      - name: Format with black
+        run: |
+          black src/
+          black tests/
+
+      - name: Test
+        run: |
+          pytest --cov=src/ tests/
+
   update-requirements:
     runs-on: ubuntu-latest
     steps:
