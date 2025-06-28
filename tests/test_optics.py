@@ -19,6 +19,7 @@ from photon_canon.hardware import (
 # -------------------------------  FIXTURES  --------------------------------
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(scope="session")
 def water() -> Medium:
     return Medium(n=1.33, desc="water")
@@ -69,6 +70,7 @@ def photon(led_system: System) -> Photon:
 # ------------------------------  TESTS: Photon  ----------------------------
 # ---------------------------------------------------------------------------
 
+
 def test_initialization(photon: Photon, led_system: System):
     # --- explicit settings --------------------------------------------------
     assert photon.wavelength == 500
@@ -100,9 +102,7 @@ def test_initialization(photon: Photon, led_system: System):
     np.testing.assert_array_equal(
         photon.location_history.squeeze(), photon.location_coordinates
     )
-    np.testing.assert_array_equal(
-        photon.weights_history.squeeze(), photon.weights
-    )
+    np.testing.assert_array_equal(photon.weights_history.squeeze(), photon.weights)
     assert not np.any(photon.cache_register)
     assert photon._medium.shape == (100,)
     assert photon.at_interface.shape == (100,)
@@ -132,9 +132,7 @@ def test_directional_cosines(photon: Photon):
 def test_location_coordinates(photon: Photon):
     # fill
     photon.location_coordinates = (0, 0, 0.1)
-    np.all(np.all(
-        photon.location_coordinates == np.array([0, 0, 0.1]), axis=1
-    ))
+    np.all(np.all(photon.location_coordinates == np.array([0, 0, 0.1]), axis=1))
 
     # batch-set
     locs = np.zeros((100, 3))
@@ -143,9 +141,7 @@ def test_location_coordinates(photon: Photon):
 
     # indexing
     photon.location_coordinates[:, 2] = 1
-    assert np.all(np.all(
-        photon.location_coordinates == np.array([0, 0, 1]), axis=1
-    ))
+    assert np.all(np.all(photon.location_coordinates == np.array([0, 0, 1]), axis=1))
 
 
 def test_weight_and_russian_roulette(photon: Photon):
@@ -178,11 +174,13 @@ def test_weight_and_russian_roulette(photon: Photon):
     for _ in range(trials):
         photon.weights = 0.0001
         hits += np.sum(photon.weights != 0) / photon.batch_size
-    assert math.isclose(hits / trials, 1 / photon.russian_roulette_constant, rel_tol=0, abs_tol=eps)
+    assert math.isclose(
+        hits / trials, 1 / photon.russian_roulette_constant, rel_tol=0, abs_tol=eps
+    )
 
 
 def test_absorb(photon: Photon, tissue: Medium):
-    photon.absorb()           # still in water
+    photon.absorb()  # still in water
     assert np.all(photon.weights == 1)
 
     photon.location_coordinates = (0, 0, 0.3)  # now in tissue
@@ -195,9 +193,7 @@ def test_absorb(photon: Photon, tissue: Medium):
 def test_move_and_interfaces(photon: Photon, water: Medium, tissue: Medium):
     # move to first interface
     photon.move()
-    np.all(np.all(
-        photon.location_coordinates == np.array([0, 0, 0.2]), axis=1
-    ))
+    np.all(np.all(photon.location_coordinates == np.array([0, 0, 0.2]), axis=1))
     assert np.all(photon.headed_into() == tissue)
     assert np.all(photon.medium == tissue)
     assert np.all(photon.at_interface)
@@ -218,36 +214,36 @@ def test_move_and_interfaces(photon: Photon, water: Medium, tissue: Medium):
     n_ratio = tissue.n / water.n
     expected = dir_cos * n_ratio
     expected[2] = -math.cos(math.asin(n_ratio * math.sin(math.acos(-2 / 3))))
-    np.testing.assert_allclose(photon.directional_cosines, np.repeat(expected[np.newaxis,...], 100, axis=0), rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(
+        photon.directional_cosines,
+        np.repeat(expected[np.newaxis, ...], 100, axis=0),
+        rtol=1e-12,
+        atol=1e-12,
+    )
 
 
 def test_scatter(photon: Photon, tissue: Medium):
     reference = np.array([0, 0, 1])
     # start in non-scattering medium (water)
     photon.scatter()
-    assert np.all(np.all(
-        photon.directional_cosines == reference, axis=0
-    ))
+    assert np.all(np.all(photon.directional_cosines == reference, axis=0))
 
     # travel into water (still non-scatter)
     photon.move(0.1)
     photon.scatter()
-    assert np.all(np.all(
-        photon.directional_cosines == reference, axis=0
-    ))
+    assert np.all(np.all(photon.directional_cosines == reference, axis=0))
 
     # reach tissue (scatter)
     photon.move()
     photon.move(0.1)
     photon.scatter()
-    assert not np.all(np.all(
-        photon.directional_cosines == reference, axis=0
-    ))
+    assert not np.all(np.all(photon.directional_cosines == reference, axis=0))
 
 
 # ---------------------------------------------------------------------------
 # ------------------------------  TESTS: Medium  ----------------------------
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="function")
 def random_medium():
@@ -282,6 +278,7 @@ def test_albedo(random_medium):
 # ---------------------------------------------------------------------------
 # ------------------------------  TESTS: System  ----------------------------
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module")
 def basic_system() -> System:
@@ -321,8 +318,16 @@ def test_in_medium(basic_system: System, z, expected):
             assert result is basic_system.layer[idx]
     else:
         left, right = result
-        l_idx = int(expected[0].split("[")[1].split("]")[0]) if "layer" in expected[0] else None
-        r_idx = int(expected[1].split("[")[1].split("]")[0]) if "layer" in expected[1] else None
+        l_idx = (
+            int(expected[0].split("[")[1].split("]")[0])
+            if "layer" in expected[0]
+            else None
+        )
+        r_idx = (
+            int(expected[1].split("[")[1].split("]")[0])
+            if "layer" in expected[1]
+            else None
+        )
         assert isinstance(result, tuple)
         if "surroundings" in expected[0]:
             assert left is basic_system.surroundings
@@ -338,6 +343,7 @@ def test_in_medium(basic_system: System, z, expected):
 # -----------------------  Additional photon–system tests  ------------------
 # ---------------------------------------------------------------------------
 
+
 def test_photon_behaviour_in_simple_system():
     tissue = Medium(n=1.4, mu_s=2, mu_a=0.5, g=0.8, desc="tissue")
     water = Medium(n=1.33, mu_s=1.5, mu_a=0.3, g=0.7, desc="water")
@@ -346,12 +352,8 @@ def test_photon_behaviour_in_simple_system():
     p = Photon(wavelength=500, system=sys, location_coordinates=(0, 0, 10))
 
     # init
-    assert np.all(np.all(
-        p.location_coordinates == (0, 0, 10), axis=1
-    ))
-    assert np.all(np.all(
-        p.directional_cosines == (0, 0, 1), axis=1
-    ))
+    assert np.all(np.all(p.location_coordinates == (0, 0, 10), axis=1))
+    assert np.all(np.all(p.directional_cosines == (0, 0, 1), axis=1))
 
     # medium transitions
     assert np.all(p.medium == tissue)
@@ -375,7 +377,9 @@ def test_photon_behaviour_in_simple_system():
 
     # Russian roulette trigger
     p.weights = 0.004
-    assert np.all(np.logical_or(p.weights == 0, p.weights == 0.004 * p.russian_roulette_constant))
+    assert np.all(
+        np.logical_or(p.weights == 0, p.weights == 0.004 * p.russian_roulette_constant)
+    )
 
     # Photons die
     p.weights = 0
