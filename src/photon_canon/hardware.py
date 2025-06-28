@@ -192,9 +192,7 @@ def create_oblique_beams(
 
 
 # Stand-in detector for all queried
-def total_acceptor(
-    x: float, y: float, mu_z: Optional[float] = None
-) -> NDArray[bool]:
+def total_acceptor(x: float, y: float, mu_z: Optional[float] = None) -> NDArray[bool]:
     """
     Detector function that accepts all reflected photons unconditionally.
 

@@ -362,9 +362,7 @@ class Detector:
         accepted_mask = self.acceptor(x, y, mu_z=mu_z)
         self.n_detected += np.nansum(weights[accepted_mask])
 
-    def __call__(
-        self, photon: Photon, mask: Optional[NDArray[bool]] = True
-    ) -> None:
+    def __call__(self, photon: Photon, mask: Optional[NDArray[bool]] = True) -> None:
         """Callable interface for detection. See :py:meth:`detect`."""
         if not isinstance(photon, Photon):
             raise ValueError(
@@ -583,7 +581,15 @@ class System:
         :rtype `in_`: medium | tuple of medium
         """
         location = np.asarray(location)
-        z = location if np.ndim(location) == 1 else np.asarray(location)[:, 2]
+        z = (
+            location
+            if np.ndim(location) == 1
+            else (
+                np.asarray([location])
+                if np.ndim(location) == 0
+                else np.asarray(location)[:, 2]
+            )
+        )
         in_medium = np.empty_like(z, dtype=object)
         in_medium = np.where(z == float("inf"), self.layer[-1], in_medium)
         in_medium = np.where(z == float("-inf"), self.layer[0], in_medium)
@@ -602,11 +608,24 @@ class System:
                 output1 = self.in_medium(z_neg_move)
                 output2 = self.in_medium(z_pos_move)
                 for i, idx in enumerate(np.where(mask_boundary)[0]):
-                    in_medium[idx] = (output1[i], output2[i])
+                    if isinstance(output1, Medium) and isinstance(output2, Medium):
+                        in_medium[idx] = (output1, output2)
+                    else:
+                        in_medium[idx] = (output1[i], output2[i])
 
             # If all have been filled in, break
             if not np.any(np.equal(in_medium, None)):
                 break
+
+        if isinstance(in_medium, tuple):
+            return in_medium
+
+        if len(in_medium) <= 1:
+            try:
+                return in_medium.item()
+            except (TypeError, ValueError):
+                return in_medium
+
         return in_medium
 
     def interface_crossed(
@@ -818,53 +837,53 @@ class IndexableProperty(np.ndarray):
 class Photon:
     """Simulated photon (or **batch** of photons) for Monte-Carlo light-transport modelling.
 
-     The object tracks each photon’s wavelength, position, direction and statistical weight while it propagates through
-      an optical :py:class:`~photon_canon.optics.System`. Built-in routines handle movement, scattering, absorption,
-      interface interactions and Russian-roulette termination.
+    The object tracks each photon’s wavelength, position, direction and statistical weight while it propagates through
+     an optical :py:class:`~photon_canon.optics.System`. Built-in routines handle movement, scattering, absorption,
+     interface interactions and Russian-roulette termination.
 
-     :ivar int n: Number of photons in the batch.
-     :ivar float | Iterable[float] wavelength: Wavelength(s) in nanometres.
-     :ivar ~photon_canon.optics.System system: Optical system that contains the batch.
-     :ivar IndexableProperty directional_cosines: Direction cosines *(μ_x, μ_y, μ_z)* for every photon.
-     :ivar numpy.ndarray location_coordinates: Cartesian coordinates *(x, y, z)* for every photon.
-     :ivar numpy.ndarray weights: Statistical weights (initially 1.0).
-     :ivar float russian_roulette_constant: Survival threshold for Russian-roulette.
-     :ivar bool recurse: Enable creation of secondary photons.
-     :ivar int recursion_depth: Current recursion depth.
-     :ivar int recursion_limit: Maximum permitted recursion depth.
-     :ivar bool throw_recursion_error: Raise an error (``True``) or just warn (``False``) when the limit is exceeded.
-     :ivar bool keep_secondary_photons: Retain secondary photons once spawned.
-     :ivar float tir_limit: Cosine threshold for total-internal reflection.
-     :ivar float A: Cumulative absorbed weight.
-     :ivar float R: Cumulative reflected weight (back-exit).
-     :ivar float T: Cumulative transmitted weight (forward-exit).
-     :ivar numpy.ndarray exit_location: Terminal coordinates of each photon.
-     :ivar numpy.ndarray exit_direction: Terminal direction cosines.
-     :ivar numpy.ndarray exit_weights: Terminal weights.
-     :ivar numpy.ndarray location_history: Complete trajectory history *(steps × n × 3)*.
-     :ivar numpy.ndarray weights_history: Corresponding weight history *(steps × n)*.
-     :ivar numpy.ndarray cache_register: Boolean mask—medium lookup cached?
-     :ivar numpy.ndarray at_interface: Boolean mask—photon currently at an interface?
+    :ivar int n: Number of photons in the batch.
+    :ivar float | Iterable[float] wavelength: Wavelength(s) in nanometres.
+    :ivar ~photon_canon.optics.System system: Optical system that contains the batch.
+    :ivar IndexableProperty directional_cosines: Direction cosines *(μ_x, μ_y, μ_z)* for every photon.
+    :ivar numpy.ndarray location_coordinates: Cartesian coordinates *(x, y, z)* for every photon.
+    :ivar numpy.ndarray weights: Statistical weights (initially 1.0).
+    :ivar float russian_roulette_constant: Survival threshold for Russian-roulette.
+    :ivar bool recurse: Enable creation of secondary photons.
+    :ivar int recursion_depth: Current recursion depth.
+    :ivar int recursion_limit: Maximum permitted recursion depth.
+    :ivar bool throw_recursion_error: Raise an error (``True``) or just warn (``False``) when the limit is exceeded.
+    :ivar bool keep_secondary_photons: Retain secondary photons once spawned.
+    :ivar float tir_limit: Cosine threshold for total-internal reflection.
+    :ivar float A: Cumulative absorbed weight.
+    :ivar float R: Cumulative reflected weight (back-exit).
+    :ivar float T: Cumulative transmitted weight (forward-exit).
+    :ivar numpy.ndarray exit_location: Terminal coordinates of each photon.
+    :ivar numpy.ndarray exit_direction: Terminal direction cosines.
+    :ivar numpy.ndarray exit_weights: Terminal weights.
+    :ivar numpy.ndarray location_history: Complete trajectory history *(steps × n × 3)*.
+    :ivar numpy.ndarray weights_history: Corresponding weight history *(steps × n)*.
+    :ivar numpy.ndarray cache_register: Boolean mask—medium lookup cached?
+    :ivar numpy.ndarray at_interface: Boolean mask—photon currently at an interface?
 
-     **Key methods**
+    **Key methods**
 
-     * :py:meth:`__init__` – construct a photon packet.
-     * :py:meth:`simulate` – propagate until all photons terminate (moves,
-         absorbs, scatters, handles interfaces).
-     * :py:meth:`absorb` – deposit weight according to medium albedo.
-     * :py:meth:`move` – advance photons, handling boundary crossings.
-     * :py:meth:`reflect_refract` – deterministic update at interfaces with Fresnel/TIR handling.
-     * :py:meth:`scatter` – random direction change using phase function.
-     * :py:meth:`russian_roulette` – survival test for low-weight photons.
-     * :py:meth:`copy` – deep copy of the photon packet.
-     * :py:meth:`plot_path` – visualise trajectories in 3-D or projection.
+    * :py:meth:`__init__` – construct a photon packet.
+    * :py:meth:`simulate` – propagate until all photons terminate (moves,
+        absorbs, scatters, handles interfaces).
+    * :py:meth:`absorb` – deposit weight according to medium albedo.
+    * :py:meth:`move` – advance photons, handling boundary crossings.
+    * :py:meth:`reflect_refract` – deterministic update at interfaces with Fresnel/TIR handling.
+    * :py:meth:`scatter` – random direction change using phase function.
+    * :py:meth:`russian_roulette` – survival test for low-weight photons.
+    * :py:meth:`copy` – deep copy of the photon packet.
+    * :py:meth:`plot_path` – visualise trajectories in 3-D or projection.
 
     """
 
     def __init__(
         self,
         wavelength: float | Iterable[float],
-        batch_size: int = 0,
+        batch_size: int = 10,
         system: Optional[System] = None,
         directional_cosines: Iterable[float] = (0, 0, 1),
         location_coordinates: Iterable[float] = (0, 0, 0),
@@ -1035,6 +1054,9 @@ class Photon:
 
         # Update cache register
         self.cache_register = np.where(unchanged, self.cache_register, np.False_)
+
+        # Update mediums
+        _ = self.medium
 
     @property
     def directional_cosines(self) -> IndexableProperty[float]:
@@ -1383,7 +1405,7 @@ class Photon:
                 * dir_cos[move_to_interface]
             )
 
-        # Update location
+        # Update location (forces cache check and medium update)
         self.location_coordinates = new_loc
 
         # Reflect/refract photons at interfaces

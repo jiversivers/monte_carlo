@@ -25,6 +25,7 @@ sO2 = 0.5
 
 class ConcentrationError(OpticalPropertyError):
     """Special error for concentration validation b/c it comes up all the time in Jacobian calculations for fitting"""
+
     pass
 
 

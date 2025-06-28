@@ -2,7 +2,16 @@ import sqlite3
 from enum import Enum
 from numbers import Real
 from pathlib import Path
-from typing import Union, Iterable, Optional, Callable, TypeVar, ParamSpec, Generic, Type
+from typing import (
+    Union,
+    Iterable,
+    Optional,
+    Callable,
+    TypeVar,
+    ParamSpec,
+    Generic,
+    Type,
+)
 
 from ..import_utils import np
 
@@ -83,16 +92,11 @@ class classOrInstanceMethod(Generic[P, R, T]):
     """
 
     def __init__(
-            self,
-            func: Callable[[Optional[T], Type[T], P.args, P.kwargs], R]
+        self, func: Callable[[Optional[T], Type[T], P.args, P.kwargs], R]
     ) -> None:
         self.func = func
 
-    def __get__(
-            self,
-            instance: Optional[T],
-            owner: Type[T]
-    ) -> Callable[P, R]:
+    def __get__(self, instance: Optional[T], owner: Type[T]) -> Callable[P, R]:
 
         def func(*args: P.args, **kwargs: P.kwargs) -> R:
             return self.func(instance, owner, *args, **kwargs)
@@ -104,9 +108,7 @@ class classOrInstanceMethod(Generic[P, R, T]):
 #  DB insertion helpers                                                       #
 # --------------------------------------------------------------------------- #
 def add_metadata(
-        n: int = None,
-        recursive: bool = False,
-        detector: Illumination = None
+    n: int = None, recursive: bool = False, detector: Illumination = None
 ) -> int:
     """
     Insert a new row into the metadata table, **mclut_simulations**, and return its *id*.
@@ -155,10 +157,7 @@ def add_metadata(
     return c.lastrowid
 
 
-def add_system_data(
-        simulation_id: int,
-        system: System
-) -> None:
+def add_system_data(simulation_id: int, system: System) -> None:
     """
     Persist the optical-system stack for a given *simulation_id*.
 
@@ -286,7 +285,7 @@ def add_simulation_result(
 
     # Add results to db
     c.executemany(
-    f"""
+        f"""
         INSERT INTO mclut 
             (mu_s, mu_a, g, depth, output, simulation_id) 
         VALUES (?, ?, ?, ?, ?, ?)
@@ -298,9 +297,7 @@ def add_simulation_result(
 
 
 def _get_sim_id(
-        obj: Optional["LUT"],
-        simulation_id: int | None,
-        set_default: bool = True
+    obj: Optional["LUT"], simulation_id: int | None, set_default: bool = True
 ) -> int | None:
     """
     Resolve which *simulation_id* to use inside class/instance helper methods.
