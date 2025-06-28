@@ -16,6 +16,7 @@
       <script src="../_static/documentation_options.js?v=b3e23499"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -125,13 +126,13 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.lut.utils.add_metadata" title="photon_canon.lut.utils.add_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_metadata</span></code></a>([n, recursive, detector])</p></td>
-<td><p></p></td>
+<td><p>Insert a new row into the metadata table, <strong>mclut_simulations</strong>, and return its <em>id</em>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.lut.utils.add_simulation_result" title="photon_canon.lut.utils.add_simulation_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_simulation_result</span></code></a>(simulation_id, mu_s, ...)</p></td>
-<td><p></p></td>
+<td><p>Bulk-insert Monte-Carlo voxel results into <strong>mclut</strong>. Bulk insert protects against partial LUT addition, and limits</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.lut.utils.add_system_data" title="photon_canon.lut.utils.add_system_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_system_data</span></code></a>(simulation_id, system)</p></td>
-<td><p></p></td>
+<td><p>Persist the optical-system stack for a given <em>simulation_id</em>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -139,13 +140,13 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.lut.utils.Dimensions" title="photon_canon.lut.utils.Dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dimensions</span></code></a>(*values)</p></td>
-<td><p></p></td>
+<td><p>Enumeration of optical-property dimensions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#photon_canon.lut.utils.ListPortion" title="photon_canon.lut.utils.ListPortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListPortion</span></code></a>(*values)</p></td>
-<td><p></p></td>
+<td><p>Handy constant slices for printing lists/arrays.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#photon_canon.lut.utils.classOrInstanceMethod" title="photon_canon.lut.utils.classOrInstanceMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classOrInstanceMethod</span></code></a>(func)</p></td>
-<td><p></p></td>
+<td><p>Decorator that lets a function behave as <strong>both</strong> an instance <em>and</em> a class-method.</p></td>
 </tr>
 </tbody>
 </table>
@@ -161,6 +162,16 @@
 <dt class="sig sig-object py" id="photon_canon.lut.utils.Dimensions">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">Dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.Dimensions" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enumeration of optical-property dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MU_S</strong> – – scattering coefficient <span class="math notranslate nohighlight">\(\mu_s\)</span></p></li>
+<li><p><strong>MU_A</strong> – – absorption coefficient <span class="math notranslate nohighlight">\(\mu_a\)</span></p></li>
+<li><p><strong>G</strong> – – Henyey–Greenstein anisotropy factor <em>g</em></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.Dimensions.G">
 <span class="sig-name descname"><span class="pre">G</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'g'</span></em><a class="headerlink" href="#photon_canon.lut.utils.Dimensions.G" title="Link to this definition"></a></dt>
@@ -188,6 +199,16 @@
 <dt class="sig sig-object py" id="photon_canon.lut.utils.ListPortion">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">ListPortion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.ListPortion" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Handy constant slices for printing lists/arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HEAD</strong> – <code class="docutils literal notranslate"><span class="pre">slice(None,</span> <span class="pre">5)</span></code> – first five items</p></li>
+<li><p><strong>TAIL</strong> – <code class="docutils literal notranslate"><span class="pre">slice(-5,</span> <span class="pre">None)</span></code> – last five items</p></li>
+<li><p><strong>ALL</strong> – <code class="docutils literal notranslate"><span class="pre">slice(None,</span> <span class="pre">None)</span></code> – the entire list</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.ListPortion.ALL">
 <span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">slice(None,</span> <span class="pre">None,</span> <span class="pre">None)</span></em><a class="headerlink" href="#photon_canon.lut.utils.ListPortion.ALL" title="Link to this definition"></a></dt>
@@ -208,9 +229,22 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.add_metadata">
 <span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">add_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.add_metadata" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Insert a new row into the metadata table, <strong>mclut_simulations</strong>, and return its <em>id</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (int | None, <em>optional</em>) – Number of photons simulated; <code class="docutils literal notranslate"><span class="pre">None</span></code> if not recorded.</p></li>
+<li><p><strong>recursive</strong> (bool, <em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">True</span></code> if the Monte-Carlo was run with recursive
+scattering, defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>detector</strong> (Any, <em>optional</em>) – Optional detector object. If supplied, its <code class="docutils literal notranslate"><span class="pre">.desc</span></code> string
+is stored in <em>detector_description</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Auto-incremented primary-key of the inserted simulation.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -218,9 +252,31 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.add_simulation_result">
 <span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">add_simulation_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.add_simulation_result" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+<dd><dl class="simple">
+<dt>Bulk-insert Monte-Carlo voxel results into <strong>mclut</strong>. Bulk insert protects against partial LUT addition, and limits</dt><dd><p>I/O time, however, this can easily be looped to write single rows at a time.</p>
+</dd>
+</dl>
+<p>Scalars are broadcast to match iterable inputs; all iterable arguments must
+share the same length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulation_id</strong> (<em>int</em>) – Simulation to which the rows belong.</p></li>
+<li><p><strong>mu_s</strong> (<em>Real</em><em> | </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Scattering coefficient(s) <span class="math notranslate nohighlight">\(\mu_s\)</span>.</p></li>
+<li><p><strong>mu_a</strong> (<em>Real</em><em> | </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Absorption coefficient(s) <span class="math notranslate nohighlight">\(\mu_a\)</span>.</p></li>
+<li><p><strong>g</strong> (<em>Real</em><em> | </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Anisotropy factor(s) <em>g</em>.</p></li>
+<li><p><strong>depth</strong> (<em>Real</em><em> | </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Depth coordinate(s) where <em>output</em> was recorded.</p></li>
+<li><p><strong>output</strong> (<em>Real</em><em> | </em><em>Iterable</em><em>[</em><em>Real</em><em>]</em>) – Recorded quantity (e.g. reflectance).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If iterable arguments have mismatched lengths.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code> – rows are committed to the database.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -228,9 +284,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.add_system_data">
 <span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">add_system_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.add_system_data" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+<dd><p>Persist the optical-system stack for a given <em>simulation_id</em>.</p>
+<p>One row per layer is written to <strong>fixed_layers</strong>; thickness and optical
+properties are frozen at the layer’s reference wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulation_id</strong> (<em>int</em>) – Foreign-key referencing <em>mclut_simulations.id</em>.</p></li>
+<li><p><strong>system</strong> (<a class="reference internal" href="photon_canon.optics.html#photon_canon.optics.System" title="photon_canon.optics.System"><em>System</em></a>) – The <code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code> whose layers are recorded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -238,7 +303,22 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="photon_canon.lut.utils.classOrInstanceMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">photon_canon.lut.utils.</span></span><span class="sig-name descname"><span class="pre">classOrInstanceMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#photon_canon.lut.utils.classOrInstanceMethod" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">R</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Decorator that lets a function behave as <strong>both</strong> an instance <em>and</em> a
+class-method.</p>
+<p>The wrapped function receives two extra arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><em>instance</em> – <code class="docutils literal notranslate"><span class="pre">self</span></code> when called on an instance, else <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><em>owner</em>    – the owning class object</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em>) – Function to wrap.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
